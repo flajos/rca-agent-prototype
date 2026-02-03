@@ -7,6 +7,7 @@ import { run } from "@openai/agents";
 import { makeInitialState } from "./state.js";
 import { makeInvestigatorAgent, makeFinalWriterAgent } from "./agents.js";
 import { evaluateQuality, formatGapsSummary } from "./quality_gates.js";
+import { MANDATORY_DIMENSIONS } from "./state.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,13 +37,13 @@ function buildUserStatus(quality) {
   const notes = [];
   const focus = [];
 
-  for (const dim of quality.dimensions ?? []) {
-    const friendlyName = dim.dimension.replace(/_/g, " ");
-    if (dim.gaps?.length) {
-      for (const gap of dim.gaps) {
+  for (const [dimName, gate] of Object.entries(quality.gates ?? {})) {
+    const friendlyName = dimName.replace(/_/g, " ");
+    if (gate.gaps?.length) {
+      for (const gap of gate.gaps) {
         notes.push(`${friendlyName}: ${gap}`);
       }
-      if (dim.importance === "mandatory") {
+      if (MANDATORY_DIMENSIONS.includes(dimName)) {
         focus.push(friendlyName);
       }
     }
@@ -82,12 +83,19 @@ function makeWebIO(session) {
         suggestedField:
           typeof promptOrQuestion === "object" ? promptOrQuestion?.suggestedField ?? null : null
       };
-      session.pendingQuestion = q;
-      emit(session, { type: "question", question: q });
-      return new Promise((resolve, reject) => {
-        session.pendingResolve = resolve;
-        session.pendingReject = reject;
+      const promise = new Promise((resolve, reject) => {
+        const item = { q, resolve, reject };
+        if (!session.pendingQuestion) {
+          session.pendingQuestion = q;
+          session.pendingResolve = resolve;
+          session.pendingReject = reject;
+          emit(session, { type: "question", question: q });
+        } else {
+          session.questionQueue.push(item);
+          emit(session, { type: "log", message: "[question] queued" });
+        }
       });
+      return promise;
     },
     log(msg) {
       emit(session, { type: "log", message: msg });
@@ -325,6 +333,7 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
     pendingQuestion: null,
     pendingResolve: null,
     pendingReject: null,
+    questionQueue: [],
     streams: new Set(),
     events: [],
     lastResult: "",
@@ -374,6 +383,17 @@ app.post("/api/answer", (req, res) => {
   session.pendingResolve = null;
   session.pendingReject = null;
   session.pendingQuestion = null;
+
+  if (session.questionQueue.length > 0) {
+    const next = session.questionQueue.shift();
+    session.pendingQuestion = next.q;
+    session.pendingResolve = next.resolve;
+    session.pendingReject = next.reject;
+    emit(session, { type: "question", question: next.q });
+  } else {
+    emit(session, { type: "question", question: null });
+  }
+
   res.json({ ok: true });
 });
 
