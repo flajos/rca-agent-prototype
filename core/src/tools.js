@@ -61,7 +61,11 @@ export const ask_user = tool({
     ctx.io?.log?.(
       `[ask_user] ${targetDimension}${suggestedField ? `.${suggestedField}` : ""}: ${question}`
     );
-    const answer = await ctx.io.ask(`${question}${suggestedField ? ` (field: ${suggestedField})` : ""}`);
+    const answer = await ctx.io.ask({
+      prompt: `${question}${suggestedField ? ` (field: ${suggestedField})` : ""}`,
+      targetDimension,
+      suggestedField
+    });
     // Store raw Q/A trace for debugging / audit
     ctx.state.dimensions[targetDimension].data._qa = ctx.state.dimensions[targetDimension].data._qa ?? [];
     ctx.state.dimensions[targetDimension].data._qa.push({ question, answer, suggestedField, at: new Date().toISOString() });
@@ -103,8 +107,21 @@ export const update_dimension = tool({
       cur = cur[p];
     }
     cur[parts[parts.length - 1]] = value;
+
+    // Normalize common aliases for context fields.
+    if (dimension === "context") {
+      if (fieldPath === "service_system_component" || fieldPath === "service_or_component") {
+        data.service = value;
+      }
+      if (fieldPath === "owning_org_team" || fieldPath === "owning_team") {
+        data.org = value;
+      }
+    }
+
     touch(ctx.state);
     ctx.io?.log?.(`[update_dimension] ${dimension}.${fieldPath}`);
+    const quality = evaluateQuality(ctx.state);
+    ctx.io?.status?.(quality);
     return { ok: true };
   }
 });
@@ -124,6 +141,8 @@ export const add_timeline_event = tool({
     ctx.state.dimensions.timeline.data.events.push({ ts, label, description, source: source ?? "user" });
     touch(ctx.state);
     ctx.io?.log?.(`[add_timeline_event] ${label} @ ${ts}`);
+    const quality = evaluateQuality(ctx.state);
+    ctx.io?.status?.(quality);
     return { ok: true, count: ctx.state.dimensions.timeline.data.events.length };
   }
 });
@@ -151,6 +170,8 @@ export const add_evidence = tool({
     ctx.state.dimensions.evidence.evidence_count = ctx.state.dimensions.evidence.data.items.length;
     touch(ctx.state);
     ctx.io?.log?.(`[add_evidence] ${title} (${kind})`);
+    const quality = evaluateQuality(ctx.state);
+    ctx.io?.status?.(quality);
     return { id, extractedSignals };
   }
 });
@@ -177,6 +198,8 @@ export const record_hypothesis = tool({
     });
     touch(ctx.state);
     ctx.io?.log?.(`[record_hypothesis] ${status}: ${statement.slice(0, 80)}`);
+    const quality = evaluateQuality(ctx.state);
+    ctx.io?.status?.(quality);
     return { id };
   }
 });

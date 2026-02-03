@@ -62,10 +62,18 @@ function emitStatus(session, quality) {
 
 function makeWebIO(session) {
   return {
-    async ask(prompt) {
+    async ask(promptOrQuestion) {
+      const prompt =
+        typeof promptOrQuestion === "string"
+          ? promptOrQuestion
+          : promptOrQuestion?.prompt ?? "Please provide input.";
       const q = {
         id: crypto.randomUUID(),
-        prompt
+        prompt,
+        targetDimension:
+          typeof promptOrQuestion === "object" ? promptOrQuestion?.targetDimension ?? null : null,
+        suggestedField:
+          typeof promptOrQuestion === "object" ? promptOrQuestion?.suggestedField ?? null : null
       };
       session.pendingQuestion = q;
       emit(session, { type: "question", question: q });
@@ -150,6 +158,40 @@ function applySignalsToState(session, signals) {
   }
 }
 
+function isPendingQuestionStillValid(session) {
+  const q = session.pendingQuestion;
+  if (!q) return true;
+  if (!q.targetDimension) return true;
+
+  const dim = session.state.dimensions[q.targetDimension];
+  if (!dim) return true;
+
+  if (q.suggestedField) {
+    let value = dim.data?.[q.suggestedField];
+    if (q.targetDimension === "context") {
+      if (q.suggestedField === "service_system_component" || q.suggestedField === "service_or_component") {
+        value = dim.data?.service ?? dim.data?.service_system_component ?? dim.data?.service_or_component;
+      }
+      if (q.suggestedField === "owning_org_team" || q.suggestedField === "owning_team") {
+        value = dim.data?.org ?? dim.data?.owning_org_team ?? dim.data?.owning_team;
+      }
+    }
+    return !value;
+  }
+
+  // Fallback: if dimension has no gaps, drop the question.
+  return (dim.gaps ?? []).length > 0;
+}
+
+function clearPendingQuestion(session, reason) {
+  if (!session.pendingQuestion) return;
+  emit(session, { type: "log", message: `[question] cleared (${reason})` });
+  session.pendingQuestion = null;
+  session.pendingResolve = null;
+  session.pendingReject = null;
+  emit(session, { type: "question", question: null });
+}
+
 function reevaluate(session, reason) {
   const quality = evaluateQuality(session.state);
   emit(session, {
@@ -158,6 +200,11 @@ function reevaluate(session, reason) {
   });
   emitStatus(session, quality);
   emitState(session);
+
+  if (!isPendingQuestionStillValid(session)) {
+    clearPendingQuestion(session, "answered by evidence");
+  }
+
   return quality;
 }
 

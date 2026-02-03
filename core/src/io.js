@@ -5,7 +5,11 @@ export function makeCLIIO() {
   const rl = readline.createInterface({ input, output });
 
   return {
-    async ask(prompt) {
+    async ask(promptOrQuestion) {
+      const prompt =
+        typeof promptOrQuestion === "string"
+          ? promptOrQuestion
+          : promptOrQuestion?.prompt ?? "Please provide input.";
       const ans = await rl.question(`\n[USER INPUT NEEDED] ${prompt}\n> `);
       return (ans ?? "").trim();
     },

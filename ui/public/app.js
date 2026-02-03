@@ -68,8 +68,13 @@ function connectStream(id) {
         appendLog(data.message, "log");
         break;
       case "question":
-        appendLog("Agent asked a question.", "question");
-        setQuestion(data.question);
+        if (data.question) {
+          appendLog("Agent asked a question.", "question");
+          setQuestion(data.question);
+        } else {
+          appendLog("Pending question cleared.", "question");
+          setQuestion(null);
+        }
         break;
       case "state":
         updateState(data.state);
