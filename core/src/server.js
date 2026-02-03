@@ -72,6 +72,27 @@ function emitStatus(session, quality) {
   emit(session, { type: "status", ...status });
 }
 
+function deriveOptionsFromState(targetDimension, suggestedField, state) {
+  if (!targetDimension || !suggestedField) return [];
+  const out = new Set();
+  const dimData = state.dimensions?.[targetDimension]?.data ?? {};
+
+  const directValue = dimData[suggestedField];
+  if (typeof directValue === "string" && directValue.trim()) out.add(directValue.trim());
+
+  const items = state.dimensions?.evidence?.data?.items ?? [];
+  const labelKey = `${targetDimension}__${suggestedField}`;
+  for (const item of items) {
+    for (const sig of item.extractedSignals ?? []) {
+      if (sig?.type === "labeled_fact" && sig.key === labelKey && sig.value) {
+        out.add(String(sig.value).trim());
+      }
+    }
+  }
+
+  return Array.from(out);
+}
+
 function makeWebIO(session) {
   return {
     async ask(promptOrQuestion) {
@@ -79,13 +100,49 @@ function makeWebIO(session) {
         typeof promptOrQuestion === "string"
           ? promptOrQuestion
           : promptOrQuestion?.prompt ?? "Please provide input.";
+      const targetDimension =
+        typeof promptOrQuestion === "object" ? promptOrQuestion?.targetDimension ?? null : null;
+      const suggestedField =
+        typeof promptOrQuestion === "object" ? promptOrQuestion?.suggestedField ?? null : null;
+      let inputType =
+        typeof promptOrQuestion === "object" ? promptOrQuestion?.inputType ?? "free_text" : "free_text";
+      let options = typeof promptOrQuestion === "object" ? promptOrQuestion?.options ?? [] : [];
+
+      // If no options provided, derive from current state/evidence (no hardcoded defaults).
+      if (!options.length && targetDimension && suggestedField) {
+        options = deriveOptionsFromState(targetDimension, suggestedField, session.state);
+      }
+
+      // If still no options, force free text to avoid empty UI controls.
+      if (!options.length && inputType !== "free_text") {
+        emit(session, { type: "log", message: "[question] no options provided; falling back to free text" });
+        inputType = "free_text";
+      }
+
+      const sig = `${targetDimension ?? ""}::${suggestedField ?? ""}::${prompt}`;
+      session.questionCounts = session.questionCounts ?? new Map();
+      session.skippedQuestions = session.skippedQuestions ?? new Set();
+
+      if (session.skippedQuestions.has(sig)) {
+        emit(session, { type: "log", message: "[question] skipped by user earlier; auto-skipping" });
+        return "";
+      }
+
+      const count = session.questionCounts.get(sig) ?? 0;
+      if (count >= 2) {
+        emit(session, { type: "log", message: "[question] repeated; auto-skipping" });
+        return "";
+      }
+      session.questionCounts.set(sig, count + 1);
+
       const q = {
         id: crypto.randomUUID(),
         prompt,
-        targetDimension:
-          typeof promptOrQuestion === "object" ? promptOrQuestion?.targetDimension ?? null : null,
-        suggestedField:
-          typeof promptOrQuestion === "object" ? promptOrQuestion?.suggestedField ?? null : null
+        targetDimension,
+        suggestedField,
+        inputType,
+        options,
+        sig
       };
       const promise = new Promise((resolve, reject) => {
         const item = { q, resolve, reject };
@@ -150,6 +207,7 @@ function resolveKeyLabel(rawKey, catalog) {
   const aliasMap = {
     vessel: "context__environment",
     environment: "context__environment",
+    position: "incident_description__location",
     location: "incident_description__location",
     impact: "incident_description__impact",
     service: "context__service",
@@ -431,6 +489,8 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
     pendingResolve: null,
     pendingReject: null,
     questionQueue: [],
+    questionCounts: new Map(),
+    skippedQuestions: new Set(),
     streams: new Set(),
     events: [],
     lastResult: "",
@@ -502,6 +562,9 @@ app.post("/api/continue", async (req, res) => {
     return;
   }
   if (session.pendingQuestion) {
+    if (session.pendingQuestion.sig) {
+      session.skippedQuestions.add(session.pendingQuestion.sig);
+    }
     clearPendingQuestion(session, "manual_continue");
   }
   emit(session, { type: "log", message: "[user] continue anyway" });

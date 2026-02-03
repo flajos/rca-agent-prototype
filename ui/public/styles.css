@@ -216,15 +216,28 @@ button[disabled] {
 
 .radio-row {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   flex-wrap: wrap;
-  font-size: 12px;
 }
 
-.radio-row label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.radio-pill {
+  border: 1px solid #2a2f3a;
+  background: #0f1115;
+  color: #e7e9ee;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.radio-pill.active {
+  border-color: #3a66ff;
+  background: #1a2653;
+}
+
+.radio-pill input {
+  display: none;
 }
 
 .status-card {

@@ -32,18 +32,7 @@ const statusHypotheses = document.getElementById("statusHypotheses");
 
 let sessionId = null;
 let eventSource = null;
-
-const SUGGESTIONS = {
-  context: {
-    environment: ["Production", "Staging", "Test", "Vessel", "Shipboard", "Onshore"],
-    service: ["Auxiliary Engine No.2", "Fuel Oil System", "Engine Room", "Auxiliary Engine"],
-    org: ["Engineering", "Vessel Engineering Team", "Chief Engineer"]
-  },
-  incident_description: {
-    impact: ["No injuries", "Minor injury", "Smoke observed", "Fire extinguished"],
-    location: ["Engine Room", "Auxiliary Engine Room", "Onboard Vessel"]
-  }
-};
+let latestState = null;
 
 function clearQuestionOptions() {
   questionOptions.classList.add("hidden");
@@ -83,52 +72,21 @@ function renderRadios(options) {
   questionRadios.classList.remove("hidden");
   for (const opt of options) {
     const label = document.createElement("label");
+    label.className = "radio-pill";
     const input = document.createElement("input");
     input.type = "radio";
     input.name = "question_radio";
     input.value = opt;
     input.addEventListener("change", () => {
       answerText.value = opt;
+      const pills = questionRadios.querySelectorAll(".radio-pill");
+      pills.forEach((p) => p.classList.remove("active"));
+      label.classList.add("active");
     });
     label.appendChild(input);
     label.appendChild(document.createTextNode(opt));
     questionRadios.appendChild(label);
   }
-}
-
-function getSuggestedOptions(question) {
-  if (!question) return [];
-  const dim = question.targetDimension;
-  const field = question.suggestedField;
-  if (dim && field && SUGGESTIONS[dim]?.[field]) {
-    return SUGGESTIONS[dim][field];
-  }
-  return [];
-}
-
-function isYesNoQuestion(text) {
-  if (!text) return false;
-  const lower = text.toLowerCase();
-  const explicit =
-    lower.includes("yes/no") ||
-    lower.includes("yes or no") ||
-    lower.includes("(yes/no)") ||
-    lower.includes("[ ] yes") ||
-    lower.includes("[ ] no");
-  if (explicit) return true;
-
-  const startsWithYesNo =
-    lower.startsWith("did ") ||
-    lower.startsWith("was ") ||
-    lower.startsWith("were ") ||
-    lower.startsWith("is ") ||
-    lower.startsWith("are ") ||
-    lower.startsWith("has ") ||
-    lower.startsWith("have ") ||
-    lower.startsWith("do ") ||
-    lower.startsWith("does ");
-
-  return startsWithYesNo && lower.trim().endsWith("?");
 }
 
 function setStatus(text) {
@@ -163,18 +121,23 @@ function setQuestion(question) {
   continueBtn.classList.remove("hidden");
 
   clearQuestionOptions();
-  const options = getSuggestedOptions(question);
-  const promptText = question.prompt ?? "";
+  const options = Array.isArray(question.options) ? question.options : [];
+  const inputType = question.inputType ?? "free_text";
+
   if (options.length) {
     questionOptions.classList.remove("hidden");
-    renderPills(options);
-  } else if (isYesNoQuestion(promptText)) {
-    questionOptions.classList.remove("hidden");
-    renderRadios(["Yes", "No", "Unknown"]);
+    if (inputType === "multi_select") {
+      renderPills(options);
+    } else if (inputType === "single_select" || inputType === "yes_no") {
+      renderRadios(options);
+    } else {
+      renderPills(options);
+    }
   }
 }
 
 function updateState(state) {
+  latestState = state;
   stateView.textContent = JSON.stringify(state, null, 2);
 }
 

@@ -54,18 +54,63 @@ export const ask_user = tool({
     question: z.string().min(3),
     targetDimension: z.enum(["incident_description", "context", "timeline", "evidence", "hypotheses"]),
     // Must be present in tool schema "required"; allow null when not provided.
-    suggestedField: z.string().nullable().default(null)
+    suggestedField: z.string().nullable().default(null),
+    inputType: z.enum(["free_text", "single_select", "multi_select", "yes_no"]).default("free_text"),
+    options: z.array(z.string()).default([])
   }),
-  async execute({ question, targetDimension, suggestedField }, runContext) {
+  async execute({ question, targetDimension, suggestedField, inputType, options }, runContext) {
     const ctx = getRcaContext(runContext);
     ctx.io?.log?.(
       `[ask_user] ${targetDimension}${suggestedField ? `.${suggestedField}` : ""}: ${question}`
     );
+
+    const requireOptions = {
+      incident_description: ["impact", "location"],
+      context: ["service", "org", "environment"]
+    };
+    if (
+      suggestedField &&
+      requireOptions[targetDimension]?.includes(suggestedField) &&
+      (!options || options.length === 0)
+    ) {
+      throw new Error(
+        `ask_user requires options for ${targetDimension}.${suggestedField}. Provide inputType and non-empty options.`
+      );
+    }
     const answer = await ctx.io.ask({
       prompt: `${question}${suggestedField ? ` (field: ${suggestedField})` : ""}`,
       targetDimension,
-      suggestedField
+      suggestedField,
+      inputType,
+      options
     });
+
+    // Auto-store answers when we have a canonical suggestedField.
+    const allowedFields = {
+      incident_description: ["text", "location", "affectedSystems", "impact"],
+      context: ["org", "service", "environment", "constraints", "stakeholders"],
+      timeline: ["events"],
+      evidence: [],
+      hypotheses: []
+    };
+
+    if (
+      suggestedField &&
+      allowedFields[targetDimension]?.includes(suggestedField) &&
+      typeof answer === "string"
+    ) {
+      let value = answer.trim();
+      if (
+        targetDimension === "incident_description" &&
+        suggestedField === "impact" &&
+        ["none", "nothing", "no impact", "n/a"].includes(value.toLowerCase())
+      ) {
+        value = "No impact reported";
+      }
+      ctx.state.dimensions[targetDimension].data[suggestedField] = value;
+      touch(ctx.state);
+      ctx.io?.log?.(`[update_dimension] ${targetDimension}.${suggestedField} (auto)`);
+    }
     // Store raw Q/A trace for debugging / audit
     ctx.state.dimensions[targetDimension].data._qa = ctx.state.dimensions[targetDimension].data._qa ?? [];
     ctx.state.dimensions[targetDimension].data._qa.push({ question, answer, suggestedField, at: new Date().toISOString() });
