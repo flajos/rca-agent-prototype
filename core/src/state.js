@@ -82,7 +82,8 @@ export function makeInitialState(seedIncidentDescription) {
 
       hypotheses: {
         data: {
-          items: [] // {id, statement, status: accepted|rejected|open, evidenceRefs: [], rationale}
+          items: [], // {id, statement, status: accepted|rejected|open, evidenceRefs: [], rationale}
+          why_chains: [] // {id, problem, steps: [{why, because}], createdAt}
         },
         importance: "optional",
         status: "partial",

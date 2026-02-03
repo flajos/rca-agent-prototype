@@ -204,6 +204,35 @@ export const record_hypothesis = tool({
   }
 });
 
+export const record_why_chain = tool({
+  name: "record_why_chain",
+  description: "Record a 5-Whys causal chain used to generate hypotheses.",
+  parameters: z.object({
+    problem: z.string().min(5),
+    steps: z.array(
+      z.object({
+        why: z.string().min(3),
+        because: z.string().min(3)
+      })
+    )
+  }),
+  async execute({ problem, steps }, runContext) {
+    const ctx = getRcaContext(runContext);
+    const id = `w_${Math.random().toString(16).slice(2)}_${Date.now()}`;
+    ctx.state.dimensions.hypotheses.data.why_chains.push({
+      id,
+      problem,
+      steps,
+      createdAt: new Date().toISOString()
+    });
+    touch(ctx.state);
+    ctx.io?.log?.(`[record_why_chain] ${problem}`);
+    const quality = evaluateQuality(ctx.state);
+    ctx.io?.status?.(quality);
+    return { id };
+  }
+});
+
 export const ALL_TOOLS = [
   get_state_snapshot,
   evaluate_quality,
@@ -211,5 +240,6 @@ export const ALL_TOOLS = [
   update_dimension,
   add_timeline_event,
   add_evidence,
-  record_hypothesis
+  record_hypothesis,
+  record_why_chain
 ];

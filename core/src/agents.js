@@ -28,7 +28,7 @@ Rules:
 
 RCA phases (based on evaluate_quality.phase):
 - Define: Fill mandatory gaps (incident_description, context, timeline).
-- Generate: Create 2–5 causal hypotheses using evidence (5 Whys / Fishbone style).
+- Generate: Create 2–5 causal hypotheses using evidence. Use a 5-Whys chain to generate candidate causes, then convert each "because" into a hypothesis. Record the chain with record_why_chain.
 - Test: Validate hypotheses using evidence. Mark accepted/rejected/open. Add evidenceRefs.
 - Confirm: If at least one accepted hypothesis exists, prepare to stop. If none accepted, ensure all hypotheses are rejected/open with rationale, then stop with "Root cause not confirmed".
 
