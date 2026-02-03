@@ -9,6 +9,10 @@ const logEl = document.getElementById("log");
 const stateView = document.getElementById("stateView");
 const finalBtn = document.getElementById("finalBtn");
 const finalView = document.getElementById("finalView");
+const finalPreview = document.getElementById("finalPreview");
+const finalViewTab = document.getElementById("finalViewTab");
+const finalPreviewTab = document.getElementById("finalPreviewTab");
+const finalFullscreenBtn = document.getElementById("finalFullscreenBtn");
 const evidenceFile = document.getElementById("evidenceFile");
 const evidenceNotes = document.getElementById("evidenceNotes");
 const evidenceBtn = document.getElementById("evidenceBtn");
@@ -175,6 +179,47 @@ function updateState(state) {
   stateView.textContent = JSON.stringify(state, null, 2);
 }
 
+function renderMarkdown(md) {
+  let html = md;
+  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+  html = html.replace(/^\s*-\s+(.*)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`);
+  html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  html = html.replace(/\n{2,}/g, "</p><p>");
+  html = `<p>${html}</p>`;
+  return html;
+}
+
+function setFinalViewTab(tab) {
+  const isPreview = tab === "preview";
+  finalViewTab.classList.toggle("active", !isPreview);
+  finalPreviewTab.classList.toggle("active", isPreview);
+  finalView.classList.toggle("hidden", isPreview);
+  finalPreview.classList.toggle("hidden", !isPreview);
+}
+
+function openFullscreenPreview() {
+  const overlay = document.createElement("div");
+  overlay.className = "fullscreen-overlay";
+  overlay.innerHTML = `
+    <div class="fullscreen-header">
+      <h2>Final RCA Preview</h2>
+      <button id="closeFullscreen" class="tab-btn">Close</button>
+    </div>
+    <div class="fullscreen-body">${renderMarkdown(finalView.textContent || "")}</div>
+  `;
+  document.body.appendChild(overlay);
+  const closeBtn = overlay.querySelector("#closeFullscreen");
+  const close = () => overlay.remove();
+  closeBtn.addEventListener("click", close);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+}
+
 function connectStream(id) {
   if (eventSource) {
     eventSource.close();
@@ -231,7 +276,12 @@ function connectStream(id) {
         break;
       case "final":
         finalView.textContent = data.output || "";
+        finalPreview.innerHTML = renderMarkdown(data.output || "");
         appendLog("Final RCA generated.", "result");
+        break;
+      case "final_delta":
+        finalView.textContent += data.delta ?? "";
+        finalPreview.innerHTML = renderMarkdown(finalView.textContent);
         break;
       case "error":
         appendLog(`Error: ${data.message}`, "error");
@@ -294,6 +344,10 @@ finalBtn.addEventListener("click", async () => {
     body: JSON.stringify({ sessionId })
   });
 });
+
+finalViewTab.addEventListener("click", () => setFinalViewTab("markdown"));
+finalPreviewTab.addEventListener("click", () => setFinalViewTab("preview"));
+finalFullscreenBtn.addEventListener("click", openFullscreenPreview);
 
 evidenceBtn.addEventListener("click", async () => {
   if (!sessionId || !evidenceFile.files.length) return;

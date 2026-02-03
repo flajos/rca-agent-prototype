@@ -371,13 +371,27 @@ ${JSON.stringify(session.state, null, 2)}
 `.trim();
 
   try {
+    session.finalInProgress = true;
     const result = await run(finalWriter, finalPrompt, {
       context: { state: session.state, io: session.io },
-      maxTurns: 100
+      maxTurns: 100,
+      stream: true
     });
-    session.finalOutput = result.finalOutput ?? "";
+
+    let output = "";
+    const textStream = result.toTextStream({ compatibleWithNodeStreams: true });
+    for await (const chunk of textStream) {
+      const delta = chunk.toString();
+      output += delta;
+      emit(session, { type: "final_delta", delta });
+    }
+
+    await result.completed;
+    session.finalOutput = output;
     emit(session, { type: "final", output: session.finalOutput });
+    session.finalInProgress = false;
   } catch (err) {
+    session.finalInProgress = false;
     emit(session, { type: "error", message: err?.message ?? String(err) });
   }
 }
@@ -515,6 +529,10 @@ app.post("/api/final", (req, res) => {
   }
   if (session.finalOutput) {
     res.json({ ok: true, output: session.finalOutput });
+    return;
+  }
+  if (session.finalInProgress) {
+    res.json({ ok: true, inProgress: true });
     return;
   }
   generateFinal(session);
