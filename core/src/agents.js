@@ -34,7 +34,7 @@ Rules:
 
 RCA phases (based on evaluate_quality.phase):
 - Define: Fill mandatory gaps (incident_description, context, timeline).
-- Generate: Create 2–5 causal hypotheses using evidence. Use a 5-Whys chain to generate candidate causes, then convert each "because" into a hypothesis. Record the chain with record_why_chain.
+- Generate hypotheses: Create 2–5 causal hypotheses using evidence. Use a 5-Whys chain to generate candidate causes, then convert each "because" into a hypothesis. Record the chain with record_why_chain.
 - When generating, always include at least one hypothesis from each systemic lens category where plausible:
   - Maintenance & lifecycle control
   - Inspection/monitoring effectiveness
@@ -43,7 +43,7 @@ RCA phases (based on evaluate_quality.phase):
   - Training / human factors
   - Supply chain / parts availability
   - Management system / governance
-- Test: Validate hypotheses using evidence. Mark accepted/rejected/open. Add evidenceRefs.
+- Test hypotheses: Validate hypotheses using evidence. Mark accepted/rejected/open. Add evidenceRefs.
 - Confirm: If at least one accepted hypothesis exists, prepare to stop. If none accepted, ensure all hypotheses are rejected/open with rationale, then stop with "Root cause not confirmed".
 
 Stopping condition:

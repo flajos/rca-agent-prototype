@@ -131,9 +131,9 @@ export function evaluateQuality(state) {
   if (!mandatoryComplete) {
     phase = "Define";
   } else if (hypothesisStats.total < 2) {
-    phase = "Generate";
+    phase = "Generate hypotheses";
   } else if (hypothesisStats.accepted === 0 && hypothesisStats.open > 0) {
-    phase = "Test";
+    phase = "Test hypotheses";
   } else if (hypothesisStats.accepted === 0 && hypothesisStats.open === 0) {
     phase = "Confirm";
   } else {
