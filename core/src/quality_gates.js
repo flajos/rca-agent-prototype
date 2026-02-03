@@ -13,6 +13,14 @@ export function evaluateQuality(state) {
   const gates = {};
   let sumPct = 0;
   let count = 0;
+  let phase = "Define";
+  let hypothesisStats = {
+    total: 0,
+    accepted: 0,
+    rejected: 0,
+    open: 0,
+    withEvidence: 0
+  };
 
   // Incident description gate
   {
@@ -66,8 +74,29 @@ export function evaluateQuality(state) {
   {
     const d = state.dimensions.hypotheses.data;
     const gaps = [];
-    if (!Array.isArray(d.items) || d.items.length === 0) gaps.push("No causal hypotheses yet.");
-    const completion = clamp(100 - gaps.length * 40, 0, 100);
+    const items = Array.isArray(d.items) ? d.items : [];
+    const accepted = items.filter(i => i.status === "accepted").length;
+    const rejected = items.filter(i => i.status === "rejected").length;
+    const open = items.filter(i => i.status === "open").length;
+    const withEvidence = items.filter(i => (i.evidenceRefs?.length ?? 0) > 0 || i.rationale).length;
+
+    hypothesisStats = {
+      total: items.length,
+      accepted,
+      rejected,
+      open,
+      withEvidence
+    };
+
+    if (items.length < 2) gaps.push("At least two causal hypotheses should be recorded.");
+    if (items.length > 0 && withEvidence < items.length) {
+      gaps.push("Some hypotheses are missing evidence references or rationale.");
+    }
+    if (items.length > 0 && accepted === 0) {
+      gaps.push("No confirmed root cause yet (no accepted hypotheses).");
+    }
+
+    const completion = clamp(100 - gaps.length * 30, 0, 100);
     gates.hypotheses = { completionPct: completion, gaps };
   }
 
@@ -89,15 +118,33 @@ export function evaluateQuality(state) {
     mandatoryGaps.push(...(gates[dim]?.gaps ?? []).map(g => ({ dimension: dim, gap: g })));
   }
 
-  const readyToStop =
+  const mandatoryComplete =
     mandatoryGaps.length === 0 ||
     MANDATORY_DIMENSIONS.every(d => (gates[d]?.completionPct ?? 0) >= 85);
+
+  if (!mandatoryComplete) {
+    phase = "Define";
+  } else if (hypothesisStats.total < 2) {
+    phase = "Generate";
+  } else if (hypothesisStats.accepted === 0 && hypothesisStats.open > 0) {
+    phase = "Test";
+  } else if (hypothesisStats.accepted === 0 && hypothesisStats.open === 0) {
+    phase = "Confirm";
+  } else {
+    phase = "Confirm";
+  }
+
+  const readyToStop =
+    mandatoryComplete &&
+    (hypothesisStats.accepted > 0 || (hypothesisStats.total >= 2 && hypothesisStats.open === 0));
 
   return {
     overallCompletionPct: overall,
     gates,
     mandatoryGaps,
-    readyToStop
+    readyToStop,
+    phase,
+    hypothesisStats
   };
 }
 

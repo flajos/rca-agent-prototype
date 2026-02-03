@@ -51,7 +51,14 @@ function buildUserStatus(quality) {
   return {
     completionPct: quality.overallCompletionPct ?? 0,
     focus: focus.length ? `Filling details for ${focus.join(", ")}.` : "Reviewing evidence.",
-    notes
+    notes,
+    phase: quality.phase ?? "Define",
+    hypothesisStats: quality.hypothesisStats ?? {
+      total: 0,
+      accepted: 0,
+      rejected: 0,
+      open: 0
+    }
   };
 }
 

@@ -19,6 +19,8 @@ const statusCompletion = document.getElementById("statusCompletion");
 const statusFocus = document.getElementById("statusFocus");
 const statusNextQuestion = document.getElementById("statusNextQuestion");
 const statusNotes = document.getElementById("statusNotes");
+const statusPhase = document.getElementById("statusPhase");
+const statusHypotheses = document.getElementById("statusHypotheses");
 
 let sessionId = null;
 let eventSource = null;
@@ -82,6 +84,16 @@ function connectStream(id) {
       case "status":
         statusCompletion.textContent = `${data.completionPct ?? 0}%`;
         statusFocus.textContent = data.focus ?? "Waiting...";
+        statusPhase.textContent = data.phase ?? "Define";
+        statusPhase.classList.remove("muted");
+        if (data.hypothesisStats) {
+          const h = data.hypothesisStats;
+          statusHypotheses.textContent = `${h.total ?? 0} total (${h.accepted ?? 0} accepted, ${h.open ?? 0} open, ${h.rejected ?? 0} rejected)`;
+          statusHypotheses.classList.remove("muted");
+        } else {
+          statusHypotheses.textContent = "0 total";
+          statusHypotheses.classList.add("muted");
+        }
         if (data.notes && data.notes.length) {
           statusNotes.innerHTML = data.notes.map((n) => `<div>• ${n}</div>`).join("");
           statusNotes.classList.remove("muted");
@@ -123,6 +135,8 @@ startBtn.addEventListener("click", async () => {
   evidenceSection.classList.remove("hidden");
   statusCompletion.textContent = "0%";
   statusFocus.textContent = "Starting investigation...";
+  statusPhase.textContent = "Define";
+  statusHypotheses.textContent = "0 total";
   statusNotes.textContent = "No notes yet.";
   statusNotes.classList.add("muted");
 
