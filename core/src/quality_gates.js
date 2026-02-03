@@ -30,9 +30,11 @@ export function evaluateQuality(state) {
   {
     const d = state.dimensions.context.data;
     const gaps = [];
-    if (!d.service) gaps.push("Service/system/component is missing.");
+    const serviceValue = d.service ?? d.service_system_component ?? null;
+    const orgValue = d.org ?? d.owning_org_team ?? null;
+    if (!serviceValue) gaps.push("Service/system/component is missing.");
     if (!d.environment) gaps.push("Environment is missing (prod/stage, vessel/site, etc.).");
-    if (!d.org) gaps.push("Owning org/team is missing.");
+    if (!orgValue) gaps.push("Owning org/team is missing.");
     const completion = clamp(100 - gaps.length * 25, 0, 100);
 
     gates.context = { completionPct: completion, gaps };
