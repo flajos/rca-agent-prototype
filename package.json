@@ -5,11 +5,14 @@
   "type": "module",
   "description": "Prototype RCA investigation agent using OpenAI Agents SDK for JS/TS",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "start": "node core/src/index.js",
+    "dev": "node --watch core/src/index.js",
+    "web": "node core/src/server.js"
   },
   "dependencies": {
     "@openai/agents": "^0.4.2",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
     "zod": "^4.0.0"
   }
 }

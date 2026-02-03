@@ -29,6 +29,9 @@ export const evaluate_quality = tool({
     const ctx = getRcaContext(runContext);
     const quality = evaluateQuality(ctx.state);
     touch(ctx.state);
+    ctx.io?.log?.(
+      `[quality] overall ${quality.overallCompletionPct}% | readyToStop=${quality.readyToStop}`
+    );
     return quality;
   }
 });
@@ -44,6 +47,9 @@ export const ask_user = tool({
   }),
   async execute({ question, targetDimension, suggestedField }, runContext) {
     const ctx = getRcaContext(runContext);
+    ctx.io?.log?.(
+      `[ask_user] ${targetDimension}${suggestedField ? `.${suggestedField}` : ""}: ${question}`
+    );
     const answer = await ctx.io.ask(`${question}${suggestedField ? ` (field: ${suggestedField})` : ""}`);
     // Store raw Q/A trace for debugging / audit
     ctx.state.dimensions[targetDimension].data._qa = ctx.state.dimensions[targetDimension].data._qa ?? [];
@@ -87,6 +93,7 @@ export const update_dimension = tool({
     }
     cur[parts[parts.length - 1]] = value;
     touch(ctx.state);
+    ctx.io?.log?.(`[update_dimension] ${dimension}.${fieldPath}`);
     return { ok: true };
   }
 });
@@ -105,6 +112,7 @@ export const add_timeline_event = tool({
     const ctx = getRcaContext(runContext);
     ctx.state.dimensions.timeline.data.events.push({ ts, label, description, source: source ?? "user" });
     touch(ctx.state);
+    ctx.io?.log?.(`[add_timeline_event] ${label} @ ${ts}`);
     return { ok: true, count: ctx.state.dimensions.timeline.data.events.length };
   }
 });
@@ -131,6 +139,7 @@ export const add_evidence = tool({
     ctx.state.dimensions.evidence.data.items.push({ id, title, kind, notes: notes ?? null, extractedSignals });
     ctx.state.dimensions.evidence.evidence_count = ctx.state.dimensions.evidence.data.items.length;
     touch(ctx.state);
+    ctx.io?.log?.(`[add_evidence] ${title} (${kind})`);
     return { id, extractedSignals };
   }
 });
@@ -156,6 +165,7 @@ export const record_hypothesis = tool({
       rationale: rationale ?? null
     });
     touch(ctx.state);
+    ctx.io?.log?.(`[record_hypothesis] ${status}: ${statement.slice(0, 80)}`);
     return { id };
   }
 });

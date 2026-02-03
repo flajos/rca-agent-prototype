@@ -1,0 +1,154 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+  background: #0f1115;
+  color: #e7e9ee;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #2a2f3a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.status {
+  font-size: 12px;
+  color: #c5c9d3;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+.panel {
+  background: #171a21;
+  border: 1px solid #2a2f3a;
+  padding: 16px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0;
+}
+
+textarea,
+input[type="file"] {
+  width: 100%;
+  background: #0f1115;
+  color: #e7e9ee;
+  border: 1px solid #2a2f3a;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+}
+
+button {
+  background: #3a66ff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.file {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.log {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.log-entry {
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #0f1115;
+  border: 1px solid #2a2f3a;
+}
+
+.log-question {
+  border-color: #f5b343;
+}
+
+.log-error {
+  border-color: #ff5c5c;
+}
+
+.state,
+.final {
+  background: #0f1115;
+  border: 1px solid #2a2f3a;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  overflow: auto;
+  max-height: 280px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.question {
+  border: 1px dashed #2a2f3a;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.muted {
+  color: #9aa3b2;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

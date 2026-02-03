@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RCA Agent Workbench</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <h1>RCA Agent Workbench</h1>
+        <div class="status">
+          <span id="statusText">Idle</span>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel" id="inputPanel">
+          <h2>Incident Input</h2>
+          <div id="incidentSection">
+            <textarea id="incidentText" rows="8" placeholder="Paste incident description..."></textarea>
+            <div class="row">
+              <label class="file">
+                <input id="incidentFiles" type="file" multiple />
+                Attach evidence files
+              </label>
+              <button id="startBtn">Start Investigation</button>
+            </div>
+          </div>
+
+          <div id="questionSection" class="section hidden">
+            <h3>Pending Question</h3>
+            <div id="questionBox" class="question muted">No pending questions.</div>
+            <textarea id="answerText" rows="3" placeholder="Type your answer..."></textarea>
+            <div class="row">
+              <button id="answerBtn" disabled>Send Answer</button>
+            </div>
+          </div>
+
+          <div id="evidenceSection" class="section hidden">
+            <h3>Add Evidence</h3>
+            <input id="evidenceFile" type="file" />
+            <textarea id="evidenceNotes" rows="2" placeholder="Notes (optional)"></textarea>
+            <div class="row">
+              <button id="evidenceBtn" disabled>Add Evidence</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Intermediary Steps</h2>
+          <div id="log" class="log"></div>
+        </section>
+
+        <section class="panel">
+          <h2>State Snapshot</h2>
+          <pre id="stateView" class="state">{}</pre>
+
+          <h2>Final RCA</h2>
+          <div class="row">
+            <button id="finalBtn" disabled>Generate Final RCA</button>
+          </div>
+          <pre id="finalView" class="final"></pre>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

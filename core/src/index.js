@@ -29,7 +29,7 @@ You MUST call evaluate_quality first, then proceed.
 
     const result = await run(investigator, initialPrompt, {
       context: ctx,
-      maxTurns: 20
+      maxTurns: 200
     });
 
     io.log("\n=== Investigator result ===");
