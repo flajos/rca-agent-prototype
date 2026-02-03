@@ -1,0 +1,12 @@
+ENGINE ROOM LOG (Extract) - Ship's time LT (UTC+1)
+Date: 08/03/2025
+
+18:16  Call from bridge: "steering sluggish"
+18:16  Steering gear hydraulic pressure alarm (local panel) observed briefly
+18:17  Pump A suction strainer DP high (noted)
+18:17  Changed over to Pump B
+18:18  Pressure stabilized, alarm cleared
+18:20  Monitoring; no recurrence
+
+Remarks:
+Recommend cleaning strainer and checking oil contamination.

@@ -1,0 +1,8 @@
+SMS EXCERPT – Environmental Compliance (SMS-ENV-05)
+- OWS operation must comply with MARPOL Annex I.
+- 15ppm alarm must be functional; any bypass/testing arrangement must be sealed and logged.
+- ORB entries must be complete, timely, and signed by responsible officer.
+- Any alarm or abnormal discharge must be reported to Master and recorded.
+
+Training:
+- Engine officers to complete annual OWS/MARPOL refresher.

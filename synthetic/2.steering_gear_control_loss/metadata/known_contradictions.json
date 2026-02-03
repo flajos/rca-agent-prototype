@@ -1,0 +1,24 @@
+{
+  "case_id": "synthetic_rca_case_02",
+  "known_issues": [
+    {
+      "type": "contradiction",
+      "topic": "alarms",
+      "evidence_a": "bridge_logbook.txt: 'No audible alarms recalled on bridge.'",
+      "evidence_b": "engine_room_log.txt: 'hydraulic pressure alarm observed briefly'",
+      "suggested_handling": "Mark as contradiction; treat local panel alarm as higher reliability than memory; note bridge may not have audible alarm."
+    },
+    {
+      "type": "data_gap",
+      "topic": "critical_minute_audio",
+      "evidence": "vdr_transcript_partial.txt: GAP 18:17:10-18:18:05",
+      "suggested_handling": "Flag as missing evidence; rely on ECDIS + logs; request VDR system health report."
+    },
+    {
+      "type": "timestamp_mismatch",
+      "topic": "utc_vs_lt",
+      "evidence": "ecdis_track_utc.csv vs bridge_logbook_lt.txt",
+      "suggested_handling": "Normalize UTC->LT (UTC+1) then rebuild unified timeline."
+    }
+  ]
+}

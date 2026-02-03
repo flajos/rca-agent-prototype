@@ -1,0 +1,12 @@
+BRIDGE LOGBOOK (Extract) - Ship's time LT (UTC+1)
+Date: 08/03/2025
+
+18:10  Coastal transit, autopilot engaged, speed 12.5 kn.
+18:16  Steering response sluggish. Autopilot disconnected. Hand steering.
+18:17  Master on bridge. Rudder indicator fluctuating.
+18:18  Altered course to regain track. Speed reduced 10.0 kn.
+18:19  Steering regained after pump changeover (per E/R).
+18:25  Situation normalized. CPA to shoal 0.28 NM.
+
+Remarks:
+No audible alarms recalled on bridge.

@@ -1,0 +1,8 @@
+VDR TRANSCRIPT (Partial) - Ship's time LT (UTC+1)
+18:15:40  OOW: "Helm seems slow to answer."
+18:16:05  *sound of autopilot disconnect*
+18:16:30  OOW: "Rudder angle... it's jumping."
+18:16:55  Master: "Call engine room. Switch steering pump."
+-- GAP: 18:17:10 to 18:18:05 (audio unavailable) --
+18:18:10  OOW: "Coming back now... keep her steady."
+18:18:45  Master: "Reduce speed. Keep clear of the shoal."

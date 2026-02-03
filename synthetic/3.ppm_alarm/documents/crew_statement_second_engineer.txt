@@ -1,0 +1,4 @@
+CREW STATEMENT – 2nd Engineer
+The OWS alarm was frequent lately. Sometimes it triggers due to sensor drift.
+We have a bypass arrangement for testing, but it should be sealed.
+I did not personally operate any bypass today.

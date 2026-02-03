@@ -1,0 +1,4 @@
+DEFECT / MAINTENANCE NOTE
+OWS 15ppm sensor:
+- Reported frequent alarms since 2025-05-30
+- Planned calibration scheduled 2025-07-05 (not yet done as of incident)

@@ -1,0 +1,94 @@
+ROOT CAUSE ANALYSIS (RCA)
+OWS 15ppm Alarm Event and Potential Overboard Discharge Non-Compliance (MARPOL Annex I)
+
+Intended acceptance: Class society / Flag / Port State Control review
+Methodology: Bowtie (controls) + 5 Whys (organizational) + Evidence contradiction handling
+
+1. Executive Summary
+On 22 June 2025 at ~08:55 LT (UTC+2) during port stay at Constanța, the vessel’s Oily Water Separator (OWS)
+triggered a 15ppm bilge alarm. The operation was stopped and Master informed. Subsequent inspection raised concern that
+the overboard discharge line/valve configuration may have been inconsistent with normal compliant operation, and the
+provided Oil Record Book (ORB) scan contained missing pages during the relevant period. No visible sheen was reported by
+terminal; however, the event is treated as a potential MARPOL Annex I non-compliance and documentation breach.
+
+2. Evidence Reviewed
+E1 Non-conformity report (C/O Environmental Officer)
+E2 Engine log extract (LT)
+E3 OWS alarm printout (device time offset unknown; faint print)
+E4 ORB partial scan (missing pages)
+E5 Crew statements (C/E, 2/E, Motorman – mixed language snippet)
+E6 SMS environmental compliance procedure SMS-ENV-05
+E7 Training records (2/E refresher overdue)
+E8 Defect note: frequent 15ppm alarms; calibration pending
+E9 Port State Control note (evidence requests)
+E10 Photo descriptions (valve alignment; seal wire condition)
+
+3. Timeline (LT UTC+2 unless noted)
+08:10  OWS started for bilge processing (E2, E4)
+08:55  15ppm alarm activated (E2; E3 timestamp not normalized)
+08:56  OWS stopped (E2)
+09:05  Master informed; investigation initiated (E2, E1)
+
+4. Findings
+F1 OWS had a known history of frequent 15ppm alarms; calibration was pending. (E8)
+F2 Training currency gap: 2/E refresher overdue; motorman only familiarization on record. (E7)
+F3 Documentation gap: ORB scan missing pages for the critical period; PSC views such discrepancies as non-compliance risk. (E4, E9)
+F4 Physical configuration concerns: overboard valve paint mark misaligned; seal wire appears cut/replaced (based on photo descriptions). (E10)
+F5 Conflicting accounts: C/E asserts no discharge after alarm; motorman observed valve open on entry; 2/E notes bypass exists but claims not used. (E5, E10)
+
+5. Causal Analysis
+5.1 Bowtie (controls perspective)
+TOP EVENT: Potential discharge of oily water above limits / MARPOL non-compliance
+Threats:
+T1 Sensor drift / false alarms leading to improper operator response (supported: frequent alarms)
+T2 Unauthorized bypass / valve misconfiguration enabling discharge (possible; evidence incomplete)
+T3 Poor recordkeeping obscuring events (supported: missing ORB pages)
+
+Barriers/Controls (expected):
+C1 Functional 15ppm alarm with automatic stop
+C2 Tamper seals on bypass and overboard arrangements
+C3 Complete ORB entries and supervisory checks
+C4 Training and competence controls
+C5 Internal audits and PSC readiness checks
+
+Barrier weaknesses observed:
+- C4 weak: training overdue (E7)
+- C3 weak: ORB scan missing pages; inadequate evidence packaging (E4)
+- C2 potentially weak: seal wire condition questionable (E10)
+- C1 uncertain: printout indicates stop signal not confirmed; relay feedback missing (E3)
+
+5.2 5 Whys (organizational)
+1. Why was there a MARPOL non-compliance risk? → Alarm event with uncertain valve/seal status and incomplete ORB evidence.
+2. Why uncertain status? → Control evidence (seals, CCTV/logs, device time) not captured/maintained; records incomplete in provided package.
+3. Why evidence not captured/maintained? → No enforced checklist for OWS operations during port with required artifacts (seal numbers, alarm logs, ORB pages).
+4. Why no enforced checklist? → SMS procedure is generic; lacks concrete "minimum evidence set" and escalation triggers.
+5. Why SMS lacks specificity? → Governance gap: environmental compliance treated as training-only, not as operational assurance with audits and KPIs.
+
+6. Root Causes (most supported by available evidence)
+RC1: Environmental compliance governance gap: lack of a defined, enforced minimum evidence set for OWS operations (seal verification, device time normalization, complete ORB capture), leading to documentation weakness and inability to definitively demonstrate compliance. (E4, E6, E9)
+RC2: Competence control gap: overdue OWS/MARPOL refresher training for 2/E and insufficient documented training for ratings, increasing risk of improper configuration or response during alarm events. (E7, E6)
+RC3: Reliability/maintenance gap: recurrent 15ppm alarms and pending sensor calibration reduced trust in instrumentation and weakened barrier C1 effectiveness. (E8, E3)
+
+7. Alternative Hypotheses (tracked; not fully provable with current evidence)
+H1: Unauthorized bypass or valve misconfiguration enabled discharge despite alarm. Evidence: valve mark/seal condition + motorman observation; contradicted by C/E statement; requires additional evidence (ORB full pages, seal tags, CCTV, access logs). (E5, E10)
+
+8. Corrective Actions (short-term)
+CA1: Immediately secure OWS bypass and overboard arrangements: install new numbered seals; record seal IDs; photograph and file in case. Owner: C/E. Due: immediate.
+CA2: Verify 15ppm alarm auto-stop function and relay feedback; conduct functional test with documented results. Owner: ETO. Due: 48h.
+CA3: Provide complete ORB pages for 08:00–10:00 and re-issue evidence pack to PSC/class society; maintain chain-of-custody for originals. Owner: Master/C/O. Due: 24h.
+CA4: Calibrate/replace 15ppm sensor and verify against certified sample; close defect. Owner: Tech Sup. Due: 7 days.
+
+9. Preventive Actions (systemic)
+PA1: Update SMS-ENV-05 with a "Minimum Evidence Set" checklist for OWS operations (seal numbers, timestamp offset, alarm history, ORB scan completeness) and mandatory supervisory sign-off. Owner: HSEQ. Due: 30 days.
+PA2: Implement training currency controls and escalation for overdue environmental compliance training; include onboard drills and competence assessment. Owner: Fleet Mgmt. Due: 30 days.
+PA3: Add quarterly internal audit item: OWS seals, ORB accuracy, alarm history retention, PSC readiness. Owner: HSEQ. Due: 60 days.
+
+10. Verification of Effectiveness
+- Audit shows sealed bypass/overboard arrangements with recorded seal IDs for 2 consecutive port calls.
+- OWS alarm tests demonstrate confirmed automatic stop and correct logging.
+- ORB completeness spot-check passes for 3 successive operations.
+
+11. Residual Uncertainty / Gaps
+- ORB missing pages in provided scan; device time offset unknown; no CCTV/access logs included. These prevent definitive determination of whether a discharge occurred post-alarm. Address via CA3 and evidence acquisition requests.
+
+Status: READY FOR REVIEW with explicitly documented uncertainty and evidence acquisition plan.

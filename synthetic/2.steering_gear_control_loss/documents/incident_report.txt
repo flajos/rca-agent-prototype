@@ -1,0 +1,21 @@
+INCIDENT REPORT
+Vessel: MV SYNTHESIS
+IMO No: 9999999
+Date: 2025-03-08
+Time: 18:16 LT (Ship's time, UTC+1)
+Position: 50°08.3'N 001°24.7'E (English Channel approaches)
+
+Narrative:
+During coastal transit under autopilot, the vessel experienced intermittent
+loss of steering response. The helm was switched to hand steering.
+Rudder angle feedback was erratic for ~2 minutes and vessel deviated from planned track.
+Steering response recovered after pump changeover.
+Nearest point of approach to shoal water estimated 0.28 NM.
+
+Immediate actions:
+- Autopilot OFF, hand steering engaged
+- Master called to bridge
+- Steering gear pump A to pump B changeover
+- Reduced speed, informed engine room
+
+Reported by: Master

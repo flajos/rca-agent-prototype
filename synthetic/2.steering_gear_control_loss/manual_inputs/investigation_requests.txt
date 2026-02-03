@@ -1,0 +1,20 @@
+MANUAL INPUT – INVESTIGATION REQUESTS (Case 02)
+
+A) Time normalization
+- Confirm ship's time offset at incident (UTC offset):
+  Ship LT offset: ________
+
+B) Environmental context
+- Visibility: ________
+- Wind/sea state: ________
+- Traffic density: ________
+
+C) Technical verification
+- Was DEF-2271 (rudder angle transmitter) present during event?
+  [ ] Yes [ ] No [ ] Unknown
+- Steering flat inspection findings (photos/notes):
+  ___________________________________________
+
+D) Human factors
+- Bridge team composition and fatigue (hours of rest last 24h):
+  ___________________________________________

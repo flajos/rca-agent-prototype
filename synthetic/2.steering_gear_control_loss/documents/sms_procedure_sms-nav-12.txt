@@ -1,0 +1,4 @@
+SMS EXCERPT – Steering Gear Failure Response (SMS-NAV-12)
+- If steering failure suspected: inform Master, reduce speed, post extra lookout
+- Changeover pumps if applicable; verify hydraulic pressure
+- Record event in logs and raise defect report for any intermittent indication

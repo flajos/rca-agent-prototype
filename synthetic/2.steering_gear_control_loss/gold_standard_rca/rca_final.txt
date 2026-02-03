@@ -1,0 +1,85 @@
+ROOT CAUSE ANALYSIS (RCA)
+Steering Gear Loss of Control – Near Grounding
+
+Intended acceptance: Class society / Flag review (DNV, ClassNK, LR, ABS style expectations)
+Methodology: Hybrid Fault Tree (technical) + 5 Whys (organizational)
+
+1. Executive Summary
+On 08 March 2025 at ~18:16 ship’s time (UTC+1), MV SYNTHESIS experienced intermittent steering response and
+erratic rudder angle indication during coastal transit. The vessel deviated from the planned track and approached
+shoal water (CPA ~0.28 NM). Steering response recovered after changeover from Steering Pump A to Pump B and speed reduction.
+No injuries or damage occurred. The event is classified as a Near Miss with high potential severity.
+
+2. Evidence Reviewed
+E1 Incident report (Master)
+E2 Bridge logbook extract (LT)
+E3 ECDIS track export (UTC) – normalized to LT
+E4 VDR transcript (partial; data gap during critical minute)
+E5 Engine room log extract (LT)
+E6 PMS records (overdue strainer cleaning; open defect DEF-2271)
+E7 Crew statements (OOW; Motorman)
+E8 SMS procedure SMS-NAV-12
+E9 Scanned checklist (OCR errors; low reliability, used only as supporting context)
+
+3. Timeline (normalized to ship’s time LT, UTC+1)
+18:10  Coastal transit, autopilot engaged (E2)
+18:16  Steering sluggish; autopilot disconnected; hand steering (E2, E4)
+18:16  E/R notes brief local hydraulic pressure alarm (E5)
+18:17  E/R observes high DP across suction strainer; pump changeover initiated (E5)
+18:18  Course deviation visible on ECDIS track; speed reduced (E3, E2)
+18:18  Steering response improves; monitoring continues (E4, E5)
+18:25  Situation normalized (E2)
+
+4. Findings
+F1 Steering response degradation coincided with brief hydraulic pressure instability. (E5)
+F2 Suction strainer differential pressure was reported high; PMS strainer cleaning overdue. (E5, E6)
+F3 Rudder angle transmitter had an open defect for intermittent signal prior to the event (DEF-2271). (E6)
+F4 VDR record has a gap during the critical minute; full reconstruction relies on logs + ECDIS. (E4, E2, E3)
+F5 Contradiction: Bridge recalls no alarms; engine room observed local alarm. (E2, E5, E7) – treated as non-fatal inconsistency.
+
+5. Causal Analysis
+5.1 Technical Fault Tree (simplified)
+TOP EVENT: Loss of effective steering / near grounding
+A) Hydraulic system pressure instability leading to reduced actuator response
+   A1) Pump suction restriction due to clogged/contaminated strainer (supported)
+   A2) Pump mechanical fault (not supported in evidence)
+B) Rudder angle feedback uncertainty leading to delayed/incorrect helm response
+   B1) Intermittent rudder angle transmitter signal (supported by open defect)
+C) Operational context increased consequence
+   C1) Coastal passage with limited margins; reliance on autopilot (supported)
+
+5.2 5 Whys (organizational)
+1. Why did steering become unreliable? → Pressure instability + unreliable rudder feedback.
+2. Why pressure instability? → Suction restriction and overdue maintenance.
+3. Why overdue maintenance? → PMS interval not enforced; task backlog not escalated.
+4. Why backlog not escalated? → No risk-based prioritization for safety-critical components.
+5. Why no prioritization? → SMS lacks explicit criticality tagging and escalation triggers for steering gear tasks.
+
+6. Root Causes (validated)
+RC1: Inadequate maintenance control of steering gear suction strainer (overdue cleaning; marginal oil quality), leading to intermittent hydraulic pressure instability. (E5, E6)
+RC2: Unresolved intermittent rudder angle transmitter defect (DEF-2271), contributing to uncertain feedback during the event. (E6, E2)
+RC3: SMS/PMS governance gap: absence of criticality-based escalation for safety-critical navigation equipment maintenance tasks. (E6, E8)
+
+7. Contributing Factors
+CF1: Partial VDR data gap reduced immediate post-incident reconstruction quality (process risk). (E4)
+CF2: OCR checklist quality prevents reliable confirmation of pre-departure steering test (documentation quality). (E9)
+CF3: Coastal navigation environment increased potential severity; reliance on autopilot at 12.5 kn reduced reaction time. (E2, E3)
+
+8. Corrective Actions (short-term)
+CA1: Clean/replace steering gear suction strainers; inspect hydraulic lines; restore normal DP readings. Owner: C/E. Due: immediate.
+CA2: Perform hydraulic oil sampling and replace/filtration as per maker guidance; trend particulate counts. Owner: Tech Sup. Due: 7 days.
+CA3: Rectify DEF-2271: test/replace rudder angle transmitter, verify calibration with independent reference. Owner: ETO. Due: 7 days.
+
+9. Preventive Actions (systemic)
+PA1: Update PMS: add safety-critical tagging for steering gear tasks; enforce escalation if overdue > X days. Owner: Fleet Mgmt. Due: 30 days.
+PA2: Update SMS: define minimum evidence for coastal passage readiness (verified steering tests; record retention). Owner: HSEQ. Due: 45 days.
+PA3: Introduce periodic navigation equipment health review including defect closure KPIs. Owner: HSEQ. Due: 60 days.
+
+10. Verification of Effectiveness
+- Post-maintenance steering tests in confined waters with recorded pressure trends and rudder feedback stability.
+- PMS audit to confirm no overdue safety-critical steering tasks for 2 consecutive cycles.
+
+11. Residual Uncertainty / Gaps
+- VDR gap during 18:17–18:18 minute; request VDR system status report and data recovery options. (E4)
+
+Status: READY FOR REVIEW (internal), acceptable for class society/flag submission with noted data gap.

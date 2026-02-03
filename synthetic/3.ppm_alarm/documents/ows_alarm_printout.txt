@@ -1,0 +1,10 @@
+OWS / 15ppm ALARM PRINTOUT (Extract)
+System: OWS-2000
+Timestamp: 2025-06-22 08:55:12 (device time, UNKNOWN offset)
+
+Event:
+- 15ppm ALARM HIGH
+- AUTOMATIC STOP SIGNAL: NOT CONFIRMED (relay feedback missing)
+
+Notes:
+Printer ribbon faint; some characters unclear.

@@ -1,0 +1,20 @@
+MANUAL INPUT – INVESTIGATION REQUESTS (Case 03)
+
+A) Evidence acquisition
+- Provide the physical ORB pages for 08:30–09:00 (photos/scans): ________
+- Provide OWS seal tag numbers + last inspection date: ________
+- Provide CCTV clip / engine room access log for 08:30–09:10: ________
+
+B) Technical
+- Confirm device time offset for OWS printer/controller: ________
+- Provide calibration certificate for 15ppm sensor: ________
+
+C) Governance / supervision
+- Who authorized any bypass/testing arrangement?
+  Name/role: ________
+- Was bypass seal found intact at start of watch?
+  [ ] Yes [ ] No [ ] Unknown
+
+D) Environmental impact
+- Any sheen observed? [ ] Yes [ ] No [ ] Unknown
+- Any sampling taken by port/terminal? ________

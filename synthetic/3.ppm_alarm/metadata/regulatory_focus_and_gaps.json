@@ -1,0 +1,17 @@
+{
+  "case_id": "synthetic_rca_case_03",
+  "regulatory_focus": [
+    "MARPOL Annex I \u2013 oily mixtures discharge criteria; OWS/15ppm alarm requirements",
+    "Oil Record Book completeness and accuracy expectations",
+    "PSC evidence expectations (alarm history, seals, calibration)"
+  ],
+  "known_gaps": [
+    "ORB missing pages in provided scan",
+    "OWS device time offset unknown",
+    "No CCTV clip included"
+  ],
+  "evaluation_notes": [
+    "RCA must clearly separate: equipment condition vs procedural bypass vs recordkeeping failure.",
+    "RCA should include strong CAPA with governance controls (training, seal management, audits)."
+  ]
+}

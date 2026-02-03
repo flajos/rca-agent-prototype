@@ -1,0 +1,7 @@
+PLANNED MAINTENANCE SYSTEM (PMS) – Steering Gear
+- Last strainer cleaning: 2024-09-01
+- Interval: 3 months (overdue by ~3 months)
+- Last hydraulic oil sample: 2024-06-15 (result: marginal particulate count)
+
+Open defects:
+- DEF-2271: Rudder angle transmitter intermittent signal (reported 2025-02-10) – NOT CLOSED

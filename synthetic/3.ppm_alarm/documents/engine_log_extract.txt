@@ -1,0 +1,8 @@
+ENGINE LOG (Extract) - 22/06/2025 (LT UTC+2)
+08:10  OWS started for bilge processing (per watch)
+08:55  15ppm alarm activated (panel)
+08:56  OWS stopped
+09:05  Master informed; investigation initiated
+
+Remarks:
+Alarm acknowledged. Settings checked.

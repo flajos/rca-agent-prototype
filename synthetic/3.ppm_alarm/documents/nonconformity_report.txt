@@ -1,0 +1,18 @@
+INCIDENT / NON-CONFORMITY REPORT
+Vessel: MV SYNTHESIS
+IMO No: 9999999
+Date: 2025-06-22
+Time: 09:05 LT (Port time, UTC+2)
+Location: Port of Constanța
+
+Summary:
+During routine machinery space bilge water processing, the 15ppm bilge alarm activated.
+Subsequent inspection found the overboard discharge line configuration inconsistent with normal operation.
+Port State Control requested records; sections of Oil Record Book (ORB) were incomplete for the morning period.
+Discharge was stopped immediately. No visible sheen reported by terminal.
+
+Initial classification:
+Environmental near miss / potential MARPOL Annex I non-compliance.
+
+Reported by:
+Chief Officer (Environmental Officer)

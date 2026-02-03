@@ -1,0 +1,8 @@
+PORT STATE CONTROL NOTE (Excerpt)
+PSC requested:
+- ORB entries for 22/06/2025 08:00-10:00
+- OWS alarm history and calibration certificates
+- Evidence that 15ppm alarm is not bypassed and tamper seals intact
+
+PSC remark:
+"Discrepancies in documentation may be treated as non-compliance."
