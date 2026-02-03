@@ -75,10 +75,14 @@ export function evaluateQuality(state) {
     const d = state.dimensions.hypotheses.data;
     const gaps = [];
     const items = Array.isArray(d.items) ? d.items : [];
-    const accepted = items.filter(i => i.status === "accepted").length;
+    const acceptedItems = items.filter(i => i.status === "accepted");
+    const accepted = acceptedItems.length;
     const rejected = items.filter(i => i.status === "rejected").length;
     const open = items.filter(i => i.status === "open").length;
     const withEvidence = items.filter(i => (i.evidenceRefs?.length ?? 0) > 0 || i.rationale).length;
+    const acceptedSystemic = acceptedItems.filter(i =>
+      ["process", "organizational"].includes(i.category ?? "technical")
+    ).length;
 
     hypothesisStats = {
       total: items.length,
@@ -94,6 +98,9 @@ export function evaluateQuality(state) {
     }
     if (items.length > 0 && accepted === 0) {
       gaps.push("No confirmed root cause yet (no accepted hypotheses).");
+    }
+    if (accepted > 0 && acceptedSystemic === 0) {
+      gaps.push("No organizational/process root cause identified behind the technical failure.");
     }
 
     const completion = clamp(100 - gaps.length * 30, 0, 100);
@@ -136,7 +143,13 @@ export function evaluateQuality(state) {
 
   const readyToStop =
     mandatoryComplete &&
-    (hypothesisStats.accepted > 0 || (hypothesisStats.total >= 2 && hypothesisStats.open === 0));
+    (hypothesisStats.accepted > 0 || (hypothesisStats.total >= 2 && hypothesisStats.open === 0)) &&
+    (hypothesisStats.accepted === 0 ||
+      ["process", "organizational"].some(cat =>
+        (state.dimensions.hypotheses.data.items || []).some(
+          i => i.status === "accepted" && (i.category ?? "technical") === cat
+        )
+      ));
 
   return {
     overallCompletionPct: overall,

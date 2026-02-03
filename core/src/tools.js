@@ -184,9 +184,21 @@ export const record_hypothesis = tool({
     status: z.enum(["open", "accepted", "rejected"]).default("open"),
     // Must be present in tool schema "required".
     evidenceRefs: z.array(z.string()).default([]),
-    rationale: z.string().nullable().default(null)
+    rationale: z.string().nullable().default(null),
+    category: z
+      .enum([
+        "technical",
+        "process",
+        "organizational",
+        "human",
+        "maintenance",
+        "inspection",
+        "supply_chain",
+        "other"
+      ])
+      .default("technical")
   }),
-  async execute({ statement, status, evidenceRefs, rationale }, runContext) {
+  async execute({ statement, status, evidenceRefs, rationale, category }, runContext) {
     const ctx = getRcaContext(runContext);
     const id = `h_${Math.random().toString(16).slice(2)}_${Date.now()}`;
     ctx.state.dimensions.hypotheses.data.items.push({
@@ -194,7 +206,8 @@ export const record_hypothesis = tool({
       statement,
       status,
       evidenceRefs: evidenceRefs ?? [],
-      rationale: rationale ?? null
+      rationale: rationale ?? null,
+      category: category ?? "technical"
     });
     touch(ctx.state);
     ctx.io?.log?.(`[record_hypothesis] ${status}: ${statement.slice(0, 80)}`);
