@@ -53,7 +53,7 @@ Generate the final RCA markdown document using this JSON state:
 ${JSON.stringify(state, null, 2)}
 `.trim();
 
-    const final = await run(finalWriter, finalPrompt, { context: ctx, maxTurns: 6 });
+    const final = await run(finalWriter, finalPrompt, { context: ctx, maxTurns: 100 });
 
     io.log("\n=== FINAL RCA DOCUMENT (markdown) ===\n");
     io.log(final.finalOutput);

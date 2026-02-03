@@ -83,7 +83,7 @@ You MUST call evaluate_quality first, then proceed.
   try {
     const result = await run(investigator, initialPrompt, {
       context: { state: session.state, io: session.io },
-      maxTurns: 20
+      maxTurns: 100
     });
 
     session.lastResult = result.finalOutput ?? "";
@@ -116,7 +116,7 @@ ${JSON.stringify(session.state, null, 2)}
   try {
     const result = await run(finalWriter, finalPrompt, {
       context: { state: session.state, io: session.io },
-      maxTurns: 6
+      maxTurns: 100
     });
     session.finalOutput = result.finalOutput ?? "";
     emit(session, { type: "final", output: session.finalOutput });
