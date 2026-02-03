@@ -1,0 +1,13 @@
+MANUAL INPUT – RCA INTERVIEW FORM
+
+1. Were any alarms or warnings prior to incident?
+[ ] Yes  [ ] No  [ ] Unknown
+
+2. Was maintenance overdue?
+[ ] Yes  [ ] No  [ ] Unknown
+
+3. Were SMS procedures followed?
+[ ] Fully  [ ] Partially  [ ] No
+
+4. Any similar past incidents?
+Free text:

@@ -1,0 +1,12 @@
+ENGINE LOGBOOK EXTRACT
+Date: 2025-01-14
+
+03:30 – Auxiliary Engine No.2 started
+03:40 – Normal operation
+03:42 – Fire alarm AE room
+03:43 – AE No.2 stopped
+03:45 – Fire extinguished
+03:55 – Area declared safe
+
+Remarks:
+Possible fuel oil leak observed near flexible hose connection.

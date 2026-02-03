@@ -1,0 +1,8 @@
+SMS PROCEDURE EXCERPT – Engine Room Fire
+
+Procedure ER-FIRE-01:
+- Stop affected machinery
+- Isolate fuel supply
+- Use portable extinguishers
+- Activate fixed firefighting system if required
+- Notify Master and Chief Engineer

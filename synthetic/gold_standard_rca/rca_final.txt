@@ -1,0 +1,61 @@
+ROOT CAUSE ANALYSIS (RCA)
+Engine Room Fire – Near Miss
+
+Methodology:
+Hybrid Fishbone + 5 Whys
+
+1. Incident Summary
+On 14 January 2025, a minor fire occurred on Auxiliary Engine No.2 due to a fuel oil leak
+from a degraded flexible hose. The fire was promptly detected and extinguished.
+No injuries occurred and damage was limited.
+
+2. Timeline of Events
+03:30 – AE No.2 started (Engine Log)
+03:42 – Fire alarm activated (VDR, Engine Log)
+03:43 – Engine stopped (VDR)
+03:45 – Fire extinguished (Engine Log)
+03:47 – Partial CO₂ release (VDR)
+
+3. Evidence Reviewed
+- Incident Report (Chief Engineer)
+- Engine Logbook
+- VDR Transcript
+- Maintenance Records
+- Crew Statement (2nd Engineer)
+- SMS Procedure ER-FIRE-01
+
+4. Causal Analysis
+Immediate Cause:
+- Fuel oil leak from degraded flexible hose ignited on hot surface
+
+Contributing Factors:
+- Hose exceeded manufacturer recommended service life
+- Visual inspection insufficient to detect internal degradation
+- No automated tracking of hose replacement intervals
+
+5 Whys (Technical):
+1. Why did fire occur? → Fuel leak ignited
+2. Why was there a fuel leak? → Hose degraded
+3. Why was hose degraded? → Exceeded service life
+4. Why not replaced earlier? → No age-based replacement policy
+5. Why no policy? → SMS lacked specific hose lifecycle controls
+
+5. Root Causes
+- Absence of age-based replacement criteria for critical fuel hoses
+- Over-reliance on visual inspections for safety-critical components
+
+6. Corrective Actions
+- Replace all fuel oil flexible hoses exceeding 7 years of service
+- Update SMS to include lifecycle management for hoses
+- Implement maintenance tracking with age alerts
+
+7. Preventive Actions
+- Crew training on early signs of hose degradation
+- Periodic audits of safety-critical consumables
+
+8. Compliance & Review
+Actions align with SOLAS Ch. II-2 fire prevention principles.
+RCA reviewed and approved by:
+Chief Engineer / Master
+
+Status: READY FOR CLASS SOCIETY REVIEW

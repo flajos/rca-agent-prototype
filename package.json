@@ -1,0 +1,15 @@
+{
+  "name": "rca-agent-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Prototype RCA investigation agent using OpenAI Agents SDK for JS/TS",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@openai/agents": "^0.4.2",
+    "zod": "^4.0.0"
+  }
+}

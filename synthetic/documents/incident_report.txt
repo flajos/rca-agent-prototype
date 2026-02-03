@@ -1,0 +1,20 @@
+INCIDENT REPORT
+Vessel: MV SYNTHESIS
+IMO No: 9999999
+Date: 2025-01-14
+Time: 03:42 LT
+Location: North Atlantic, 45°12'N 12°45'W
+
+Description:
+At approximately 03:42 LT, duty engineer observed smoke in the auxiliary engine room.
+Inspection revealed a small fire on auxiliary engine no.2 fuel oil supply line.
+Fire was extinguished using portable extinguisher and partial CO₂ release.
+No injuries reported.
+
+Immediate actions:
+- Engine stopped
+- Fuel supply isolated
+- Area ventilated after confirmation of fire extinction
+
+Reported by:
+Chief Engineer
