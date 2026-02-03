@@ -30,6 +30,7 @@ Rules:
   - incident_description: text, location, affectedSystems, impact
   - context: org, service, environment, constraints, stakeholders
   - timeline: events
+- Do NOT treat response/mitigation actions as causal hypotheses. If you need to capture response actions, add them as timeline events or evidence notes, not hypotheses.
 
 RCA phases (based on evaluate_quality.phase):
 - Define: Fill mandatory gaps (incident_description, context, timeline).
@@ -73,6 +74,10 @@ Output requirements:
 Style:
 - Clear, direct, non-poetic.
 - Use headings and bullet lists.
+
+Rules:
+- Only treat accepted hypotheses with category != "response" as root causes.
+- Response/mitigation actions must be described in timeline or evidence, not as root causes.
 `.trim()
   });
 }

@@ -199,6 +199,7 @@ export const record_hypothesis = tool({
         "maintenance",
         "inspection",
         "supply_chain",
+        "response",
         "other"
       ])
       .default("technical")
