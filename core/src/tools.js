@@ -99,6 +99,21 @@ export const update_dimension = tool({
   async execute({ dimension, fieldPath, value }, runContext) {
     const ctx = getRcaContext(runContext);
     const data = ctx.state.dimensions[dimension].data;
+    const allowedFields = {
+      incident_description: ["text", "location", "affectedSystems", "impact"],
+      context: ["org", "service", "environment", "constraints", "stakeholders"],
+      timeline: ["events"],
+      evidence: [],
+      hypotheses: []
+    };
+
+    if (!allowedFields[dimension].includes(fieldPath)) {
+      throw new Error(
+        `Invalid fieldPath "${dimension}.${fieldPath}". Allowed fields: ${allowedFields[dimension]
+          .map((f) => `${dimension}.${f}`)
+          .join(", ")}`
+      );
+    }
     const parts = fieldPath.split(".");
     let cur = data;
     for (let i = 0; i < parts.length - 1; i++) {
@@ -107,16 +122,6 @@ export const update_dimension = tool({
       cur = cur[p];
     }
     cur[parts[parts.length - 1]] = value;
-
-    // Normalize common aliases for context fields.
-    if (dimension === "context") {
-      if (fieldPath === "service_system_component" || fieldPath === "service_or_component") {
-        data.service = value;
-      }
-      if (fieldPath === "owning_org_team" || fieldPath === "owning_team") {
-        data.org = value;
-      }
-    }
 
     touch(ctx.state);
     ctx.io?.log?.(`[update_dimension] ${dimension}.${fieldPath}`);

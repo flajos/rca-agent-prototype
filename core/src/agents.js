@@ -26,6 +26,10 @@ Rules:
 - Track hypotheses. Mark as accepted/rejected only if evidence supports it; otherwise keep open.
 - Every hypothesis must include evidenceRefs or a rationale explaining why evidence is missing.
 - You MUST dig until you identify at least one organizational or process-level root cause behind any technical failure.
+- Strict schema: only write canonical keys. Do NOT invent or use aliases.
+  - incident_description: text, location, affectedSystems, impact
+  - context: org, service, environment, constraints, stakeholders
+  - timeline: events
 
 RCA phases (based on evaluate_quality.phase):
 - Define: Fill mandatory gaps (incident_description, context, timeline).

@@ -269,15 +269,7 @@ function isPendingQuestionStillValid(session) {
   if (!dim) return true;
 
   if (q.suggestedField) {
-    let value = dim.data?.[q.suggestedField];
-    if (q.targetDimension === "context") {
-      if (q.suggestedField === "service_system_component" || q.suggestedField === "service_or_component") {
-        value = dim.data?.service ?? dim.data?.service_system_component ?? dim.data?.service_or_component;
-      }
-      if (q.suggestedField === "owning_org_team" || q.suggestedField === "owning_team") {
-        value = dim.data?.org ?? dim.data?.owning_org_team ?? dim.data?.owning_team;
-      }
-    }
+    const value = dim.data?.[q.suggestedField];
     return !value;
   }
 

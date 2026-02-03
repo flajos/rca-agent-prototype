@@ -36,11 +36,7 @@ const SUGGESTIONS = {
   context: {
     environment: ["Production", "Staging", "Test", "Vessel", "Shipboard", "Onshore"],
     service: ["Auxiliary Engine No.2", "Fuel Oil System", "Engine Room", "Auxiliary Engine"],
-    service_system_component: ["Auxiliary Engine No.2", "Fuel Oil Hose", "Fuel Oil Supply Line"],
-    service_or_component: ["Auxiliary Engine No.2", "Fuel Oil Hose", "Fuel Oil Supply Line"],
-    owning_org_team: ["Engineering", "Vessel Engineering Team", "Chief Engineer"],
-    owning_team: ["Engineering", "Vessel Engineering Team", "Chief Engineer"],
-    owning_org: ["Engineering", "Vessel Engineering Team", "Chief Engineer"]
+    org: ["Engineering", "Vessel Engineering Team", "Chief Engineer"]
   },
   incident_description: {
     impact: ["No injuries", "Minor injury", "Smoke observed", "Fire extinguished"],
