@@ -15,6 +15,9 @@ const evidenceBtn = document.getElementById("evidenceBtn");
 const incidentSection = document.getElementById("incidentSection");
 const questionSection = document.getElementById("questionSection");
 const evidenceSection = document.getElementById("evidenceSection");
+const questionOptions = document.getElementById("questionOptions");
+const questionPills = document.getElementById("questionPills");
+const questionRadios = document.getElementById("questionRadios");
 const statusCompletion = document.getElementById("statusCompletion");
 const statusFocus = document.getElementById("statusFocus");
 const statusNextQuestion = document.getElementById("statusNextQuestion");
@@ -24,6 +27,108 @@ const statusHypotheses = document.getElementById("statusHypotheses");
 
 let sessionId = null;
 let eventSource = null;
+
+const SUGGESTIONS = {
+  context: {
+    environment: ["Production", "Staging", "Test", "Vessel", "Shipboard", "Onshore"],
+    service: ["Auxiliary Engine No.2", "Fuel Oil System", "Engine Room", "Auxiliary Engine"],
+    service_system_component: ["Auxiliary Engine No.2", "Fuel Oil Hose", "Fuel Oil Supply Line"],
+    service_or_component: ["Auxiliary Engine No.2", "Fuel Oil Hose", "Fuel Oil Supply Line"],
+    owning_org_team: ["Engineering", "Vessel Engineering Team", "Chief Engineer"],
+    owning_team: ["Engineering", "Vessel Engineering Team", "Chief Engineer"],
+    owning_org: ["Engineering", "Vessel Engineering Team", "Chief Engineer"]
+  },
+  incident_description: {
+    impact: ["No injuries", "Minor injury", "Smoke observed", "Fire extinguished"],
+    location: ["Engine Room", "Auxiliary Engine Room", "Onboard Vessel"]
+  }
+};
+
+function clearQuestionOptions() {
+  questionOptions.classList.add("hidden");
+  questionPills.innerHTML = "";
+  questionRadios.innerHTML = "";
+  questionRadios.classList.add("hidden");
+}
+
+function renderPills(options) {
+  questionPills.innerHTML = "";
+  const values = new Set(
+    answerText.value
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean)
+  );
+  for (const opt of options) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `pill${values.has(opt) ? " active" : ""}`;
+    btn.textContent = opt;
+    btn.addEventListener("click", () => {
+      if (values.has(opt)) {
+        values.delete(opt);
+      } else {
+        values.add(opt);
+      }
+      answerText.value = Array.from(values).join(", ");
+      renderPills(options);
+    });
+    questionPills.appendChild(btn);
+  }
+}
+
+function renderRadios(options) {
+  questionRadios.innerHTML = "";
+  questionRadios.classList.remove("hidden");
+  for (const opt of options) {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "question_radio";
+    input.value = opt;
+    input.addEventListener("change", () => {
+      answerText.value = opt;
+    });
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(opt));
+    questionRadios.appendChild(label);
+  }
+}
+
+function getSuggestedOptions(question) {
+  if (!question) return [];
+  const dim = question.targetDimension;
+  const field = question.suggestedField;
+  if (dim && field && SUGGESTIONS[dim]?.[field]) {
+    return SUGGESTIONS[dim][field];
+  }
+  return [];
+}
+
+function isYesNoQuestion(text) {
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  const explicit =
+    lower.includes("yes/no") ||
+    lower.includes("yes or no") ||
+    lower.includes("(yes/no)") ||
+    lower.includes("[ ] yes") ||
+    lower.includes("[ ] no");
+  if (explicit) return true;
+
+  const startsWithYesNo =
+    lower.startsWith("did ") ||
+    lower.startsWith("was ") ||
+    lower.startsWith("were ") ||
+    lower.startsWith("is ") ||
+    lower.startsWith("are ") ||
+    lower.startsWith("has ") ||
+    lower.startsWith("have ") ||
+    lower.startsWith("do ") ||
+    lower.startsWith("does ");
+
+  return startsWithYesNo && lower.trim().endsWith("?");
+}
 
 function setStatus(text) {
   statusText.textContent = text;
@@ -44,6 +149,7 @@ function setQuestion(question) {
     questionSection.classList.add("hidden");
     statusNextQuestion.textContent = "None.";
     statusNextQuestion.classList.add("muted");
+    clearQuestionOptions();
     return;
   }
   questionBox.textContent = question.prompt;
@@ -52,6 +158,17 @@ function setQuestion(question) {
   questionSection.classList.remove("hidden");
   statusNextQuestion.textContent = question.prompt;
   statusNextQuestion.classList.remove("muted");
+
+  clearQuestionOptions();
+  const options = getSuggestedOptions(question);
+  const promptText = question.prompt ?? "";
+  if (options.length) {
+    questionOptions.classList.remove("hidden");
+    renderPills(options);
+  } else if (isYesNoQuestion(promptText)) {
+    questionOptions.classList.remove("hidden");
+    renderRadios(["Yes", "No", "Unknown"]);
+  }
 }
 
 function updateState(state) {
