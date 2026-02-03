@@ -36,6 +36,16 @@ export const evaluate_quality = tool({
   }
 });
 
+export const get_state_snapshot = tool({
+  name: "get_state_snapshot",
+  description: "Return the full RCA state snapshot for the agent to inspect.",
+  parameters: z.object({}),
+  async execute(_, runContext) {
+    const ctx = getRcaContext(runContext);
+    return ctx.state;
+  }
+});
+
 export const ask_user = tool({
   name: "ask_user",
   description: "Ask the user a targeted question to fill a gap. Returns the user's answer as plain text.",
@@ -171,6 +181,7 @@ export const record_hypothesis = tool({
 });
 
 export const ALL_TOOLS = [
+  get_state_snapshot,
   evaluate_quality,
   ask_user,
   update_dimension,
