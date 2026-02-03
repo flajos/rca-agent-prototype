@@ -54,6 +54,17 @@ function makeWebIO(session) {
   };
 }
 
+function truncateText(text, maxChars = 20000) {
+  if (!text) return "";
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, maxChars)}\n...[truncated ${text.length - maxChars} chars]`;
+}
+
+function extractTextFromFile(file) {
+  if (!file?.buffer) return "";
+  return file.buffer.toString("utf8");
+}
+
 function addEvidenceFromFile(session, file, notes) {
   const id = `ev_${crypto.randomUUID()}`;
   session.state.dimensions.evidence.data.items.push({
@@ -175,7 +186,12 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
 
   const files = req.files ?? [];
   for (const file of files) {
-    addEvidenceFromFile(session, file);
+    const content = truncateText(extractTextFromFile(file));
+    const notes = content ? `Uploaded file content:\n${content}` : null;
+    addEvidenceFromFile(session, file, notes);
+    if (!incident && content) {
+      session.state.dimensions.incident_description.data.text = content;
+    }
   }
 
   emit(session, { type: "log", message: "[session] started" });
