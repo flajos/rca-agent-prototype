@@ -32,6 +32,34 @@ function emitState(session) {
   emit(session, { type: "state", state: session.state });
 }
 
+function buildUserStatus(quality) {
+  const notes = [];
+  const focus = [];
+
+  for (const dim of quality.dimensions ?? []) {
+    const friendlyName = dim.dimension.replace(/_/g, " ");
+    if (dim.gaps?.length) {
+      for (const gap of dim.gaps) {
+        notes.push(`${friendlyName}: ${gap}`);
+      }
+      if (dim.importance === "mandatory") {
+        focus.push(friendlyName);
+      }
+    }
+  }
+
+  return {
+    completionPct: quality.overallCompletionPct ?? 0,
+    focus: focus.length ? `Filling details for ${focus.join(", ")}.` : "Reviewing evidence.",
+    notes
+  };
+}
+
+function emitStatus(session, quality) {
+  const status = buildUserStatus(quality);
+  emit(session, { type: "status", ...status });
+}
+
 function makeWebIO(session) {
   return {
     async ask(prompt) {
@@ -49,6 +77,9 @@ function makeWebIO(session) {
     log(msg) {
       emit(session, { type: "log", message: msg });
       emitState(session);
+    },
+    status(quality) {
+      emitStatus(session, quality);
     },
     async close() {}
   };
@@ -105,6 +136,7 @@ You MUST call evaluate_quality first, then proceed.
       type: "log",
       message: `[quality] overall ${quality.overallCompletionPct}% | ${formatGapsSummary(quality)}`
     });
+    emitStatus(session, quality);
     emitState(session);
 
     if ((session.lastResult ?? "").trim() === "READY_FOR_FINAL_RCA") {
@@ -196,6 +228,7 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
 
   emit(session, { type: "log", message: "[session] started" });
   emitState(session);
+  emitStatus(session, evaluateQuality(session.state));
 
   startInvestigation(session);
 

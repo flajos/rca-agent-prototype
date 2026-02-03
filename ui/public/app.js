@@ -15,6 +15,10 @@ const evidenceBtn = document.getElementById("evidenceBtn");
 const incidentSection = document.getElementById("incidentSection");
 const questionSection = document.getElementById("questionSection");
 const evidenceSection = document.getElementById("evidenceSection");
+const statusCompletion = document.getElementById("statusCompletion");
+const statusFocus = document.getElementById("statusFocus");
+const statusNextQuestion = document.getElementById("statusNextQuestion");
+const statusNotes = document.getElementById("statusNotes");
 
 let sessionId = null;
 let eventSource = null;
@@ -36,12 +40,16 @@ function setQuestion(question) {
     questionBox.classList.add("muted");
     answerBtn.disabled = true;
     questionSection.classList.add("hidden");
+    statusNextQuestion.textContent = "None.";
+    statusNextQuestion.classList.add("muted");
     return;
   }
   questionBox.textContent = question.prompt;
   questionBox.classList.remove("muted");
   answerBtn.disabled = false;
   questionSection.classList.remove("hidden");
+  statusNextQuestion.textContent = question.prompt;
+  statusNextQuestion.classList.remove("muted");
 }
 
 function updateState(state) {
@@ -65,6 +73,17 @@ function connectStream(id) {
         break;
       case "state":
         updateState(data.state);
+        break;
+      case "status":
+        statusCompletion.textContent = `${data.completionPct ?? 0}%`;
+        statusFocus.textContent = data.focus ?? "Waiting...";
+        if (data.notes && data.notes.length) {
+          statusNotes.innerHTML = data.notes.map((n) => `<div>• ${n}</div>`).join("");
+          statusNotes.classList.remove("muted");
+        } else {
+          statusNotes.textContent = "No notes yet.";
+          statusNotes.classList.add("muted");
+        }
         break;
       case "result":
         appendLog(`Investigator result: ${data.output || "(none)"}`, "result");
@@ -97,6 +116,10 @@ startBtn.addEventListener("click", async () => {
   finalBtn.disabled = true;
   evidenceBtn.disabled = false;
   evidenceSection.classList.remove("hidden");
+  statusCompletion.textContent = "0%";
+  statusFocus.textContent = "Starting investigation...";
+  statusNotes.textContent = "No notes yet.";
+  statusNotes.classList.add("muted");
 
   const formData = new FormData();
   formData.append("incident", incidentText.value);

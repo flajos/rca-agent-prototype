@@ -32,6 +32,7 @@ export const evaluate_quality = tool({
     ctx.io?.log?.(
       `[quality] overall ${quality.overallCompletionPct}% | readyToStop=${quality.readyToStop}`
     );
+    ctx.io?.status?.(quality);
     return quality;
   }
 });

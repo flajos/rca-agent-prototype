@@ -139,6 +139,38 @@ button[disabled] {
   border-radius: 8px;
 }
 
+.status-card {
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #0f1115;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.status-row .label {
+  color: #9aa3b2;
+}
+
+.status-row .value {
+  text-align: right;
+}
+
+.status-notes {
+  border: 1px dashed #2a2f3a;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+}
+
 .muted {
   color: #9aa3b2;
 }

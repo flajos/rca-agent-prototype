@@ -54,6 +54,25 @@
         </section>
 
         <section class="panel">
+          <h2>Status</h2>
+          <div id="statusCard" class="status-card">
+            <div class="status-row">
+              <span class="label">Overall completion</span>
+              <span id="statusCompletion" class="value">0%</span>
+            </div>
+            <div class="status-row">
+              <span class="label">Current focus</span>
+              <span id="statusFocus" class="value muted">Waiting to start.</span>
+            </div>
+            <div class="status-row">
+              <span class="label">Next question</span>
+              <span id="statusNextQuestion" class="value muted">None yet.</span>
+            </div>
+          </div>
+
+          <h3>Progress Notes</h3>
+          <div id="statusNotes" class="status-notes muted">No notes yet.</div>
+
           <h2>State Snapshot</h2>
           <pre id="stateView" class="state">{}</pre>
 
