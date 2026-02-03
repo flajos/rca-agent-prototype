@@ -96,14 +96,79 @@ function extractTextFromFile(file) {
   return file.buffer.toString("utf8");
 }
 
-function addEvidenceFromFile(session, file, notes) {
+function extractSignalsFromText(text) {
+  const signals = [];
+  const lower = text.toLowerCase();
+
+  if (lower.includes("fire")) {
+    signals.push({ type: "incident_type", value: "fire" });
+  }
+  if (lower.includes("smoke")) {
+    signals.push({ type: "symptom", value: "smoke observed" });
+  }
+  if (lower.includes("injury")) {
+    const value = lower.includes("no injur")
+      ? "no injuries reported"
+      : "injuries mentioned";
+    signals.push({ type: "impact", value });
+  }
+
+  const locationMatch = text.match(/Location:\s*(.+)/i);
+  if (locationMatch?.[1]) {
+    signals.push({ type: "incident_location", value: locationMatch[1].trim() });
+  }
+
+  const dateMatch = text.match(/Date:\s*(.+)/i);
+  const timeMatch = text.match(/Time:\s*(.+)/i);
+  if (dateMatch?.[1] || timeMatch?.[1]) {
+    const ts = [dateMatch?.[1], timeMatch?.[1]].filter(Boolean).join(" ");
+    signals.push({ type: "incident_time", value: ts.trim() });
+  }
+
+  return signals;
+}
+
+function applySignalsToState(session, signals) {
+  const incident = session.state.dimensions.incident_description.data;
+  const timeline = session.state.dimensions.timeline.data;
+
+  for (const signal of signals) {
+    if (signal.type === "incident_location" && !incident.location) {
+      incident.location = signal.value;
+    }
+    if (signal.type === "impact" && !incident.impact) {
+      incident.impact = signal.value;
+    }
+    if (signal.type === "incident_time") {
+      timeline.events.push({
+        ts: signal.value,
+        label: "Incident reported",
+        description: "Timestamp referenced in evidence file.",
+        source: "evidence"
+      });
+    }
+  }
+}
+
+function reevaluate(session, reason) {
+  const quality = evaluateQuality(session.state);
+  emit(session, {
+    type: "log",
+    message: `[quality] reevaluated after ${reason} -> ${quality.overallCompletionPct}%`
+  });
+  emitStatus(session, quality);
+  emitState(session);
+  return quality;
+}
+
+function addEvidenceFromFile(session, file, notes, extractedSignals = []) {
   const id = `ev_${crypto.randomUUID()}`;
   session.state.dimensions.evidence.data.items.push({
     id,
     title: file.originalname,
     kind: "other",
     notes: notes ?? null,
-    extractedSignals: []
+    extractedSignals
   });
   session.state.dimensions.evidence.evidence_count =
     session.state.dimensions.evidence.data.items.length;
@@ -220,7 +285,10 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
   for (const file of files) {
     const content = truncateText(extractTextFromFile(file));
     const notes = content ? `Uploaded file content:\n${content}` : null;
-    addEvidenceFromFile(session, file, notes);
+    const signals = content ? extractSignalsFromText(content) : [];
+    addEvidenceFromFile(session, file, notes, signals);
+    applySignalsToState(session, signals);
+    reevaluate(session, "initial evidence upload");
     if (!incident && content) {
       session.state.dimensions.incident_description.data.text = content;
     }
@@ -266,7 +334,14 @@ app.post("/api/evidence", upload.single("file"), (req, res) => {
     res.status(400).json({ error: "missing_file" });
     return;
   }
-  const id = addEvidenceFromFile(session, req.file, notes);
+  const content = truncateText(extractTextFromFile(req.file));
+  const combinedNotes = [notes, content ? `Uploaded file content:\n${content}` : null]
+    .filter(Boolean)
+    .join("\n\n");
+  const signals = content ? extractSignalsFromText(content) : [];
+  const id = addEvidenceFromFile(session, req.file, combinedNotes, signals);
+  applySignalsToState(session, signals);
+  reevaluate(session, "evidence upload");
   res.json({ ok: true, id });
 });
 
