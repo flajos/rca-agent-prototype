@@ -161,16 +161,21 @@ finalBtn.addEventListener("click", async () => {
 
 evidenceBtn.addEventListener("click", async () => {
   if (!sessionId || !evidenceFile.files.length) return;
-  const formData = new FormData();
-  formData.append("sessionId", sessionId);
-  formData.append("notes", evidenceNotes.value);
-  formData.append("file", evidenceFile.files[0]);
+  const notes = evidenceNotes.value;
+  const files = Array.from(evidenceFile.files);
   evidenceNotes.value = "";
   evidenceFile.value = "";
-  await fetch("/api/evidence", {
-    method: "POST",
-    body: formData
-  });
+
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append("sessionId", sessionId);
+    formData.append("notes", notes);
+    formData.append("file", file);
+    await fetch("/api/evidence", {
+      method: "POST",
+      body: formData
+    });
+  }
 });
 
 // Initial UI state
