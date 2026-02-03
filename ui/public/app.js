@@ -22,6 +22,7 @@ const evidenceSection = document.getElementById("evidenceSection");
 const questionOptions = document.getElementById("questionOptions");
 const questionPills = document.getElementById("questionPills");
 const questionRadios = document.getElementById("questionRadios");
+const continueBtn = document.getElementById("continueBtn");
 const statusCompletion = document.getElementById("statusCompletion");
 const statusFocus = document.getElementById("statusFocus");
 const statusNextQuestion = document.getElementById("statusNextQuestion");
@@ -150,6 +151,7 @@ function setQuestion(question) {
     statusNextQuestion.textContent = "None.";
     statusNextQuestion.classList.add("muted");
     clearQuestionOptions();
+    continueBtn.classList.add("hidden");
     return;
   }
   questionBox.textContent = question.prompt;
@@ -158,6 +160,7 @@ function setQuestion(question) {
   questionSection.classList.remove("hidden");
   statusNextQuestion.textContent = question.prompt;
   statusNextQuestion.classList.remove("muted");
+  continueBtn.classList.remove("hidden");
 
   clearQuestionOptions();
   const options = getSuggestedOptions(question);
@@ -281,6 +284,7 @@ function connectStream(id) {
         break;
       case "error":
         appendLog(`Error: ${data.message}`, "error");
+        continueBtn.classList.remove("hidden");
         break;
       default:
         break;
@@ -330,6 +334,16 @@ answerBtn.addEventListener("click", async () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId, answer })
   });
+});
+
+continueBtn.addEventListener("click", async () => {
+  if (!sessionId) return;
+  await fetch("/api/continue", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId })
+  });
+  continueBtn.classList.add("hidden");
 });
 
 finalBtn.addEventListener("click", async () => {

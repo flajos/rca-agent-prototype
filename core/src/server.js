@@ -29,6 +29,10 @@ function emit(session, event) {
   }
 }
 
+function emitError(session, message) {
+  emit(session, { type: "error", message });
+}
+
 function emitState(session) {
   emit(session, { type: "state", state: session.state });
 }
@@ -350,7 +354,7 @@ You MUST call evaluate_quality first, then proceed.
       emit(session, { type: "ready_for_final" });
     }
   } catch (err) {
-    emit(session, { type: "error", message: err?.message ?? String(err) });
+    emitError(session, err?.message ?? String(err));
   }
 }
 
@@ -384,7 +388,7 @@ ${JSON.stringify(session.state, null, 2)}
     session.finalInProgress = false;
   } catch (err) {
     session.finalInProgress = false;
-    emit(session, { type: "error", message: err?.message ?? String(err) });
+    emitError(session, err?.message ?? String(err));
   }
 }
 
@@ -487,6 +491,21 @@ app.post("/api/answer", (req, res) => {
     emit(session, { type: "question", question: null });
   }
 
+  res.json({ ok: true });
+});
+
+app.post("/api/continue", async (req, res) => {
+  const { sessionId } = req.body ?? {};
+  const session = sessions.get(sessionId);
+  if (!session) {
+    res.status(404).json({ error: "session_not_found" });
+    return;
+  }
+  if (session.pendingQuestion) {
+    clearPendingQuestion(session, "manual_continue");
+  }
+  emit(session, { type: "log", message: "[user] continue anyway" });
+  startInvestigation(session);
   res.json({ ok: true });
 });
 
