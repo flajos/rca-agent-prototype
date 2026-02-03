@@ -119,9 +119,80 @@ function extractTextFromFile(file) {
   return file.buffer.toString("utf8");
 }
 
-function extractSignalsFromText(text) {
+function buildKeyCatalog(state) {
+  const catalog = [];
+  for (const [dimension, dimValue] of Object.entries(state.dimensions)) {
+    const data = dimValue.data ?? {};
+    for (const key of Object.keys(data)) {
+      catalog.push({
+        dimension,
+        key,
+        label: `${dimension}__${key}`
+      });
+    }
+  }
+  return catalog;
+}
+
+function normalizeKeyName(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function resolveKeyLabel(rawKey, catalog) {
+  const normalized = normalizeKeyName(rawKey);
+  const direct = catalog.find(c => normalizeKeyName(c.key) === normalized);
+  if (direct) return direct.label;
+
+  const aliasMap = {
+    vessel: "context__environment",
+    environment: "context__environment",
+    location: "incident_description__location",
+    impact: "incident_description__impact",
+    service: "context__service",
+    system: "context__service",
+    component: "context__service",
+    team: "context__org",
+    org: "context__org",
+    organization: "context__org",
+    date: "timeline__events",
+    time: "timeline__events"
+  };
+
+  for (const [alias, label] of Object.entries(aliasMap)) {
+    if (normalized.includes(alias)) return label;
+  }
+
+  return null;
+}
+
+function extractFactsFromText(text) {
+  const facts = [];
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    const match = line.match(/^([^:]+):\s*(.+)$/);
+    if (match) {
+      facts.push({ key: match[1].trim(), value: match[2].trim() });
+    }
+  }
+  return facts;
+}
+
+function extractSignalsFromText(text, state) {
   const signals = [];
   const lower = text.toLowerCase();
+  const catalog = buildKeyCatalog(state);
+  const facts = extractFactsFromText(text);
+
+  for (const fact of facts) {
+    const label = resolveKeyLabel(fact.key, catalog);
+    if (label) {
+      signals.push({
+        type: "labeled_fact",
+        key: label,
+        value: fact.value
+      });
+    }
+  }
 
   if (lower.includes("fire")) {
     signals.push({ type: "incident_type", value: "fire" });
@@ -154,8 +225,24 @@ function extractSignalsFromText(text) {
 function applySignalsToState(session, signals) {
   const incident = session.state.dimensions.incident_description.data;
   const timeline = session.state.dimensions.timeline.data;
+  const context = session.state.dimensions.context.data;
 
   for (const signal of signals) {
+    if (signal.type === "labeled_fact" && signal.key) {
+      const [dimension, key] = signal.key.split("__");
+      if (dimension === "incident_description") {
+        incident[key] = signal.value;
+      } else if (dimension === "context") {
+        context[key] = signal.value;
+      } else if (dimension === "timeline" && key === "events") {
+        timeline.events.push({
+          ts: signal.value,
+          label: "Timeline detail",
+          description: "Timestamp or event detail from evidence.",
+          source: "evidence"
+        });
+      }
+    }
     if (signal.type === "incident_location" && !incident.location) {
       incident.location = signal.value;
     }
@@ -348,7 +435,7 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
   for (const file of files) {
     const content = truncateText(extractTextFromFile(file));
     const notes = content ? `Uploaded file content:\n${content}` : null;
-    const signals = content ? extractSignalsFromText(content) : [];
+    const signals = content ? extractSignalsFromText(content, session.state) : [];
     addEvidenceFromFile(session, file, notes, signals);
     applySignalsToState(session, signals);
     reevaluate(session, "initial evidence upload");
@@ -412,7 +499,7 @@ app.post("/api/evidence", upload.single("file"), (req, res) => {
   const combinedNotes = [notes, content ? `Uploaded file content:\n${content}` : null]
     .filter(Boolean)
     .join("\n\n");
-  const signals = content ? extractSignalsFromText(content) : [];
+  const signals = content ? extractSignalsFromText(content, session.state) : [];
   const id = addEvidenceFromFile(session, req.file, combinedNotes, signals);
   applySignalsToState(session, signals);
   reevaluate(session, "evidence upload");
