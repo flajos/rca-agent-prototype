@@ -13,6 +13,8 @@
 - CAPA, review workflows, and integrations are explicitly out of scope for the first phase
 - The investigation loop is phase-driven: Define → Generate → Test → Confirm
 - 5 Whys is used explicitly in hypothesis generation (not as proof)
+- Root cause is only confirmed when an accepted hypothesis is supported by evidence and is not merely a response/mitigation action
+- At least one organizational/process root cause must be identified behind the technical failure
 
 ## RCA Definition
 - A Root Cause Analysis (RCA) is a structured investigation that explains why an incident occurred, not just what happened. It reconstructs events using evidence, tests possible explanations, and identifies the underlying conditions that allowed the incident to occur, so effective corrective and preventive actions can be defined.
@@ -53,6 +55,7 @@ that the information is good enough to have a quality RCA.
 - Hypotheses dimension includes:
     - `items` (hypotheses with status, evidenceRefs, rationale)
     - `why_chains` (recorded 5-Whys chains)
+- Each hypothesis includes a `category` (e.g., technical, process, organizational, maintenance, inspection, supply_chain, response)
 ### Start 
 - The seed dimension of the RCA process is the *incident description*
 - It can be introduced by the user as text or handwritten PDF form (a file upload)  - but can have other sources too, like deficiences from an inspection document, ERP or other... )
@@ -70,6 +73,8 @@ that the information is good enough to have a quality RCA.
     - Evidence references or rationale per hypothesis
     - At least one accepted hypothesis (or explicitly unresolved)
 - Quality evaluation emits phase and hypothesis stats for UI
+- Accepted hypotheses that are response/mitigation actions are not treated as root causes
+- A valid root cause requires at least one accepted organizational/process hypothesis behind the technical failure
 ### Reasoning step
 - Based on the existing gaps the Agent will decide what it should do next
 ### Acting
@@ -86,6 +91,7 @@ existing documents, context etc.)
 - We can decide to stop when a certain completion threshold is met
 - We can have a mechanism where the user decides that the gathered information is good enough and can instruct the agent to stop (this needs UI feedback the user so he knows the internal state)
 - Stop condition now requires mandatory completeness and hypothesis resolution (accepted or explicitly unconfirmed)
+- Stop condition also requires at least one accepted organizational/process root cause (not a response action)
 ### Final RCA generation
 - After data gathering has stopped, the Agent performs a final generation step.
 - In this step, the Agent produces a complete RCA document based on the accumulated shared state.
@@ -97,3 +103,4 @@ existing documents, context etc.)
     - Final root cause statement(s)
     - Explicit assumptions, unknowns, and open questions, if any
 - Only causal hypotheses that remain supported by evidence are reflected in the final root cause statement
+- Response/mitigation actions must be reported in timeline/evidence sections, not as root causes
