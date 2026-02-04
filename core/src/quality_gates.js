@@ -50,9 +50,16 @@ export function evaluateQuality(state) {
   {
     const d = state.dimensions.timeline.data;
     const gaps = [];
-    if (!Array.isArray(d.events) || d.events.length < 3) gaps.push("Timeline needs at least 3 events (start, detection, mitigation).");
-    // Basic check: timestamps present for all events
-    const missingTs = (d.events || []).filter(e => !e.ts).length;
+    if (!Array.isArray(d.events) || d.events.length < 3)
+      gaps.push("Timeline needs at least 3 events (start, detection, mitigation).");
+    // Basic check: timestamps present for all events.
+    // Accept either {ts, ...} objects or "ts: description" strings.
+    const missingTs = (d.events || []).filter((e) => {
+      if (typeof e === "string") {
+        return !e.split(":")[0]?.trim();
+      }
+      return !e?.ts;
+    }).length;
     if (missingTs > 0) gaps.push("Some timeline events are missing timestamps.");
     const completion = clamp(100 - gaps.length * 35, 0, 100);
 

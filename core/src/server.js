@@ -209,6 +209,9 @@ function resolveKeyLabel(rawKey, catalog) {
     environment: "context__environment",
     position: "incident_description__location",
     location: "incident_description__location",
+    "reported by": "context__org",
+    "reporting officer": "context__org",
+    "responsible officer": "context__org",
     impact: "incident_description__impact",
     service: "context__service",
     system: "context__service",
@@ -230,10 +233,25 @@ function resolveKeyLabel(rawKey, catalog) {
 function extractFactsFromText(text) {
   const facts = [];
   const lines = text.split(/\r?\n/);
-  for (const line of lines) {
-    const match = line.match(/^([^:]+):\s*(.+)$/);
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const match = line.match(/^([^:]+):\s*(.*)$/);
     if (match) {
-      facts.push({ key: match[1].trim(), value: match[2].trim() });
+      const key = match[1].trim();
+      let value = match[2].trim();
+      if (!value) {
+        // Handle keys with value on the next line (e.g., "Reported by:")
+        for (let j = i + 1; j < lines.length; j++) {
+          const next = lines[j].trim();
+          if (next) {
+            value = next;
+            break;
+          }
+        }
+      }
+      if (value) {
+        facts.push({ key, value });
+      }
     }
   }
   return facts;
