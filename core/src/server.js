@@ -513,7 +513,8 @@ app.post("/api/start", upload.array("files"), async (req, res) => {
     events: [],
     lastResult: "",
     finalOutput: "",
-    readyForFinal: false
+    readyForFinal: false,
+    forceFinal: false
   };
 
   session.io = makeWebIO(session);
@@ -590,6 +591,18 @@ app.post("/api/continue", async (req, res) => {
   res.json({ ok: true });
 });
 
+app.post("/api/continue_agent", async (req, res) => {
+  const { sessionId } = req.body ?? {};
+  const session = sessions.get(sessionId);
+  if (!session) {
+    res.status(404).json({ error: "session_not_found" });
+    return;
+  }
+  emit(session, { type: "log", message: "[user] continue agent" });
+  startInvestigation(session);
+  res.json({ ok: true });
+});
+
 app.post("/api/evidence", upload.single("file"), (req, res) => {
   const { sessionId, notes } = req.body ?? {};
   const session = sessions.get(sessionId);
@@ -627,7 +640,24 @@ app.post("/api/final", (req, res) => {
     res.json({ ok: true, inProgress: true });
     return;
   }
+  if (!session.readyForFinal && !session.forceFinal) {
+    res.status(400).json({ error: "not_ready_for_final" });
+    return;
+  }
   generateFinal(session);
+  res.json({ ok: true });
+});
+
+app.post("/api/force_final", (req, res) => {
+  const { sessionId } = req.body ?? {};
+  const session = sessions.get(sessionId);
+  if (!session) {
+    res.status(404).json({ error: "session_not_found" });
+    return;
+  }
+  session.forceFinal = true;
+  emit(session, { type: "log", message: "[user] force final RCA" });
+  emit(session, { type: "ready_for_final", forced: true });
   res.json({ ok: true });
 });
 

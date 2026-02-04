@@ -13,6 +13,7 @@ const finalPreview = document.getElementById("finalPreview");
 const finalViewTab = document.getElementById("finalViewTab");
 const finalPreviewTab = document.getElementById("finalPreviewTab");
 const finalFullscreenBtn = document.getElementById("finalFullscreenBtn");
+const forceFinalBtn = document.getElementById("forceFinalBtn");
 const evidenceFile = document.getElementById("evidenceFile");
 const evidenceNotes = document.getElementById("evidenceNotes");
 const evidenceBtn = document.getElementById("evidenceBtn");
@@ -23,6 +24,7 @@ const questionOptions = document.getElementById("questionOptions");
 const questionPills = document.getElementById("questionPills");
 const questionRadios = document.getElementById("questionRadios");
 const continueBtn = document.getElementById("continueBtn");
+const continueAgentBtn = document.getElementById("continueAgentBtn");
 const statusCompletion = document.getElementById("statusCompletion");
 const statusFocus = document.getElementById("statusFocus");
 const statusNextQuestion = document.getElementById("statusNextQuestion");
@@ -110,6 +112,7 @@ function setQuestion(question) {
     statusNextQuestion.classList.add("muted");
     clearQuestionOptions();
     continueBtn.classList.add("hidden");
+    continueAgentBtn.classList.remove("hidden");
     return;
   }
   questionBox.textContent = question.prompt;
@@ -119,6 +122,7 @@ function setQuestion(question) {
   statusNextQuestion.textContent = question.prompt;
   statusNextQuestion.classList.remove("muted");
   continueBtn.classList.remove("hidden");
+  continueAgentBtn.classList.add("hidden");
 
   clearQuestionOptions();
   const options = Array.isArray(question.options) ? question.options : [];
@@ -234,6 +238,7 @@ function connectStream(id) {
         break;
       case "ready_for_final":
         finalBtn.disabled = false;
+        forceFinalBtn.disabled = true;
         appendLog("Ready for final RCA generation.", "result");
         break;
       case "final":
@@ -309,6 +314,15 @@ continueBtn.addEventListener("click", async () => {
   continueBtn.classList.add("hidden");
 });
 
+continueAgentBtn.addEventListener("click", async () => {
+  if (!sessionId) return;
+  await fetch("/api/continue_agent", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId })
+  });
+});
+
 finalBtn.addEventListener("click", async () => {
   if (!sessionId) return;
   await fetch("/api/final", {
@@ -316,6 +330,17 @@ finalBtn.addEventListener("click", async () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId })
   });
+});
+
+forceFinalBtn.addEventListener("click", async () => {
+  if (!sessionId) return;
+  await fetch("/api/force_final", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId })
+  });
+  finalBtn.disabled = false;
+  forceFinalBtn.disabled = true;
 });
 
 finalViewTab.addEventListener("click", () => setFinalViewTab("markdown"));
