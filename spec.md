@@ -36,7 +36,11 @@ generation, but first we focus on the basic agent and add this feature after tha
 - ERP integration
 
 ## The UI:
--- Removed from spec per request (no UI mentions)
+- Where the user interaction will take place:
+    1. we can use the current chat format OR
+    2. we can create a separate workbench UI which gives the user information about the current state of the agent, current draft of RCA, list of evidences, the checkist it follows etc.
+- We will have dynamic forms which can ask different questions from the user in form of inputs, selects, checkboxes, file uploads etc. triggered by the agent when he needs it.
+- If we are using a reasoning agent, we should show the user the reasoning going on during the process
 
 ## The Agent 
 - Proposal is a single-agent ReAct pattern for start: the agent reasoning and actions (tool use) to reach an answer. It checks at every turn if he reached the defined goal, if not it reasons about what action to take

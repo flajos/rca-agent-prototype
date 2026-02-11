@@ -1,6 +1,8 @@
 # RCA Agent Prototype (OpenAI Agents SDK - JS)
 
-This is a **prototype** implementing the core loop from your RCA Agent spec:
+![RCA Agent Prototype banner](docs/images/image.png)
+
+This is a **prototype** implementing the core loop based on the [RCA Agent spec](spec.md):
 - shared state with **static RCA dimensions**
 - **quality gates** that compute gaps + completion %
 - a **single ReAct-style investigator agent** that iterates: observe → reason → act
@@ -26,8 +28,10 @@ This is a **prototype** implementing the core loop from your RCA Agent spec:
 
 ## Run
 ```bash
-npm start
+npm run web
 ```
+
+You can use generated real-life-like cases from the `synthetic` folder.
 
 ## How it works (high-level)
 - You paste an incident description.
